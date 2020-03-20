@@ -2,9 +2,6 @@
 VolunteerVsVirus Backend
 
 Aufbau MySQL-Tabellen
-vserver.leon-heinrichs.de
-database WirVsVirus
-user vvv
 
 table users
 id
