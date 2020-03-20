@@ -1,2 +1,2 @@
 # vvv-backend
-WirVsVolunteer Backend
+VolunteerVsVirus Backend
