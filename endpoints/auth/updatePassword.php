@@ -8,7 +8,7 @@ use tools\HttpError;
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-const REQUIRED_FIELDS = ['email', 'forename', 'surname'];
+const REQUIRED_FIELDS = ['email', 'oldPassword', 'newPassword'];
 $master = new MasterController();
 /* SETUP */
 
@@ -34,35 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    // Validate email
-    if(!$validator->isValidEmail($data->email)) {
-        $master->errorResponse(new HttpError(400, 'Bitte gib eine gültige Email-Adresse an.'));
+    // Validate password strength
+    $passwordWeaknesses = $validator->validatePassword($data->newPassword);
+    if(count($passwordWeaknesses) > 0) {
+        $master->errorResponse($passwordWeaknesses);
         return;
     }
 
-    // Validate password strength
-    // $passwordWeaknesses = $validator->validatePassword($data->pass_new);
-    // if(count($passwordWeaknesses) > 0) {
-    //     $master->errorResponse($passwordWeaknesses);
-    //     return;
-    // }
-
-    // Change everything of user except password! see updatePassword.php
     $user = getUserByEmail($data->email);
-    if($_SESSION[SESSION_NAME_USERID] == $user->id) {
-        $user->email = $data->email;
-        $user->forename = $data->forename;
-        $user->surname = $data->surname;
-
-        if ($master->userController->changeUser($user)) {
-            http_response_code(200);
-            return;
-        } else {
-            http_response_code(400);
-            return;
-        }
+    if (password_verify($data->oldPassword, $user->pass)) {
+        changeUserPassword($user, $data->newPassword);
+        http_response_code(200);
+        return;
     } else {
         $master->errorResponse(new HttpError(401, 'Das Passwort war nicht korrekt.'));
         return;
     }
-}
