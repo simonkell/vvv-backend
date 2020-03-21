@@ -3,7 +3,7 @@
 Wir verbinden freiwillige Helfer und medizinische Einrichtungen
 *[Project overview](https://devpost.com/software/1_024_a_krankenhauser-if-schleife)
 *[Frontend git](https://github.com/ericprytulla/wirvsvirus_volunteer_public_frontend)
-*[Frontend] (https://app.volunteervsvirus.de)
+*[Frontend](https://app.volunteervsvirus.de)
 
 ## How-Tos
 
