@@ -2,14 +2,8 @@
 use controllers\MasterController;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
-spl_autoload_register(function ($class) {
-    $file = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
-    if (file_exists($file)) {
-        require $file;
-        return true;
-    }
-    return false;
-});
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
+
 
 const REQUIRED_FIELDS = ['email', 'pass'];
 $master = new MasterController();
