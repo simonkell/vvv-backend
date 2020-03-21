@@ -97,7 +97,8 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);
-        $stmt->bind_param("i", (int) $id);
+        $isSql = (int) $id;
+        $stmt->bind_param("i", $isSql);
 
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
