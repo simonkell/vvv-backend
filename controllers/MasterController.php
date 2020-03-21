@@ -19,7 +19,7 @@ class MasterController
 
     public function __construct()
     {
-        $this->db = new DbController();;
+        $this->db = new DbController($this);
         $this->userController = $userController = new UserController($this);
         $this->institutionController = new InstitutionController($this);
         $this->db->connect();
