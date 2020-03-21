@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Try to update profile. Timestamp for update will be set inside update function
-    $institutionProfile = $master->institutionController->getInstitutionProfileByUserId($data->user_id);
+    $institutionProfile = $master->institutionController->getInstitutionProfileByUserId($master->user);
     if (isset($institutionProfile)) {
         http_response_code(200);
         $master->returnObjectAsJson($institutionProfile);
