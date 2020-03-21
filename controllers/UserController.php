@@ -9,7 +9,7 @@ class UserController extends Controller
     public $ROLE_DEFAULT = 1;
     private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?, ?, ?, ?, ?, ?)";
     private $QUERY_UPDATE_USER = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
-    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='?' LIMIT 1";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`=? LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
 
@@ -26,8 +26,9 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($pass);
 
         $stmt = $con->prepare($this->QUERY_REGISTER);
-        $stmt->bind_param("ssssii", $forename, $surname, $email, $password_hashed, $role, $active);
-        if($con->query($stmt)) {
+        $stmt->bind_param("ssssii", $email, $forename, $surname, $password_hashed, $role, $active);
+        $stmt->execute();
+        if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
@@ -42,7 +43,7 @@ class UserController extends Controller
 
         $stmt = $con->prepare(QUERY_UPDATE_USER);
         $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->pass, $user->role, $user->active, $user->id);
-        return $con->query($stmt);
+        return $stmt->execute();
     }
 
     public function changeUserPassword(User $user, $passNew)
@@ -55,7 +56,8 @@ class UserController extends Controller
 
         $stmt = $con->prepare($this->QUERY_UPDATE_USER);
         $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id);
-        return $con->query( $stmt);
+
+        return $stmt->execute();
     }
 
     public function sendUserPasswordEmail(User $user)
@@ -69,13 +71,19 @@ class UserController extends Controller
 
         $stmt = $con->prepare($this->QUERY_USER_BY_EMAIL);
         $stmt->bind_param("s", $email);
-        $result = $con->query( $stmt);
-        if ($result && $result->num_rows > 0) {
-            $result = $result->fetch_object();
 
-            $this->master->user = new User($result);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+
+        if (!empty($row)) {
+            $this->master->user = new User($row);
+            $stmt->free_result();
+            $stmt->close();
             return $this->master->user;
+
         } else {
+            $stmt->free_result();
+            $stmt->close();
             return null;
         }
     }
@@ -91,7 +99,7 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);
-        $stmt->bind_param("i", (int) $id);
+        $stmt->bind_param("i", (int)$id);
         $result = $con->query($stmt);
 
         if ($result && $result->num_rows > 0) {

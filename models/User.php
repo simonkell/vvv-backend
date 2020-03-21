@@ -12,13 +12,23 @@ class User
 
     public function __construct($data)
     {
-        $this->id = $data->id;
-        $this->email = $data->email;
-        $this->forename = $data->forename;
-        $this->surname = $data->surname;
-        $this->pass = $data->pass;
-        $this->role = $data->role;
-        $this->active = $data->active;
+        if(is_array($data)){
+            $this->id = $data['id'];
+            $this->email = $data['email'];
+            $this->forename = $data['forename'];
+            $this->surname = $data['surname'];
+            $this->pass = $data['pass'];
+            $this->role = $data['role'];
+            $this->active = $data['active'];
+        }else{
+            $this->id = $data->id;
+            $this->email = $data->email;
+            $this->forename = $data->forename;
+            $this->surname = $data->surname;
+            $this->pass = $data->pass;
+            $this->role = $data->role;
+            $this->active = $data->active;
+        }
     }
 
 
