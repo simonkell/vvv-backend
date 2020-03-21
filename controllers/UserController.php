@@ -26,7 +26,7 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($pass);
 
         $stmt = $con->prepare($this->QUERY_REGISTER);
-        $stmt->bind_param("ssssii", $forename, $surname, $email, $password_hashed, $role, $active);
+        $stmt->bind_param("ssssii", $forename, $surname, strtolower($email), $password_hashed, $role, $active);
         if($con->query($stmt)) {
             $this->master->user = $this->getUserByEmail($email);
 
@@ -68,7 +68,7 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_EMAIL);
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", strtolower($email));
         $result = $con->query( $stmt);
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
@@ -82,7 +82,7 @@ class UserController extends Controller
 
     public function isExisting($email)
     {
-        return ($this->getUserByEmail($email) != null);
+        return ($this->getUserByEmail(strtolower($email)) != null);
     }
 
     public function getUserById($id)
