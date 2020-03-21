@@ -32,7 +32,7 @@ class UserController extends Controller
             $this->master->user = $this->getUserByEmail($email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
-        }else{ return flase;}
+        }else{ return false;}
     }
 
     public function changeUserPassword($db, User $user, $passNew)
