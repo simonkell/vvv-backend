@@ -2,13 +2,14 @@
 
 namespace controllers;
 
+use models\ConfirmationKey;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
 class MailerController extends Controller
 {
-    public function sendMail($confirmKey, $mailTarget) {
+    public function sendMail(ConfirmationKey $confirmKey, $mailTarget) {
         require '../packages/phpmailer/Exception.php';
         require '../packages/phpmailer/PHPMailer.php';
         require '../packages/phpmailer/SMTP.php';
@@ -39,7 +40,7 @@ class MailerController extends Controller
             $mail->Subject = 'Volunteer Vs Virus Registrierung bestätigen';
 
 
-            $confirmUrl = 'api.volunteervsvirus.de/userConfirmation.php?key=' . $confirmKey;
+            $confirmUrl = 'api.volunteervsvirus.de/userConfirmation.php?key=' . $confirmKey->key;
             $mail->Body = require('./mail-templates/registration.php');
 
             $mail->send();
