@@ -40,11 +40,20 @@ class InstitutionController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_BY_ID);
-        $stmt->bind_param("i", $idSql = ((int) $id));
-        $result = $con->query($stmt);
-        if ($result && $result->num_rows > 0) {
-            $result = $result->fetch_object();
-            return new InstitutionProfile($result);
+        $stmt->bind_param("i", (int) $id);
+
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+
+        if (!empty($row)) {
+            $institutionProfile = new InstitutionProfile($row);
+            $stmt->free_result();
+            $stmt->close();
+            return $institutionProfile;
+        } else {
+            $stmt->free_result();
+            $stmt->close();
+            return null;
         }
 
         return null;
@@ -54,11 +63,20 @@ class InstitutionController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_BY_USERID);
-        $stmt->bind_param("i", $user->id);
-        $result = $con->query($stmt);
-        if ($result && $result->num_rows > 0) {
-            $result = $result->fetch_object();
-            return new InstitutionProfile($result);
+        $stmt->bind_param("i", (int) $user->id);
+
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+
+        if (!empty($row)) {
+            $institutionProfile = new InstitutionProfile($row);
+            $stmt->free_result();
+            $stmt->close();
+            return $institutionProfile;
+        } else {
+            $stmt->free_result();
+            $stmt->close();
+            return null;
         }
 
         return null;

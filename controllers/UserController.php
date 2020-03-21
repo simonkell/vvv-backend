@@ -98,15 +98,20 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);
-        $stmt->bind_param("i", (int)$id);
-        $result = $con->query($stmt);
+        $stmt->bind_param("i", (int) $id);
 
-        if ($result && $result->num_rows > 0) {
-            $result = $result->fetch_object();
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
 
-            $this->master->user = new User($result);
+        if (!empty($row)) {
+            $this->master->user = new User($row);
+            $stmt->free_result();
+            $stmt->close();
             return $this->master->user;
+
         } else {
+            $stmt->free_result();
+            $stmt->close();
             return null;
         }
     }
