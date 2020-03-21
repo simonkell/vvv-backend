@@ -9,8 +9,8 @@ class UserController extends Controller
     public $ROLE_DEFAULT = 1;
     private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES ('%s', '%s', '%s', '%s', '%d', '%b')";
     private $QUERY_UPDATE_PASSWORD = "UPDATE users SET `email`='%s', `forename`='%s', `surname`='%s', `pass`='%s', `role`='%d', `active`='%b' WHERE `ID`='%d'";
-    private $QUERY_USER_BY_EMAIL = "SELECT `email`,``id`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
-    private $QUERY_USER_BY_ID = "SELECT `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`='%d' LIMIT 1";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
+    private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`='%d' LIMIT 1";
 
 
     private function hashPassword($password)
