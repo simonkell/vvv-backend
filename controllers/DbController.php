@@ -23,8 +23,7 @@ class DbController
 
         // Check connection
         if ($this->CONNECTION->connect_error) {
-            //$page->addError("Die Datenbank ist zur Zeit nicht erreichbar. Bitte wenden Sie sich an den Systemadministrator");
-            // TODO: responseController->returnDbError() (?)
+			$master->errorResponse(new HttpError(500, 'Connection to server could not be established.'));
         }
     }
 

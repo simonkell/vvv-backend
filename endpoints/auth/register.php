@@ -15,7 +15,6 @@ spl_autoload_register(function ($class) {
 });
 
 const REQUIRED_FIELDS = ['email', 'forename', 'surname', 'pass'];
-
 $master = new MasterController();
 
 $dataContent = file_get_contents("php://input");
