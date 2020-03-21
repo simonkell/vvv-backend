@@ -16,12 +16,16 @@ class MasterController
     public $db, $userController, $user;
 
     public $institutionController;
+    public $keyController;
+    public $mailerController;
 
     public function __construct()
     {
         $this->db = new DbController($this);
-        $this->userController = $userController = new UserController($this);
+        $this->userController = new UserController($this);
         $this->institutionController = new InstitutionController($this);
+        $this->keyController = new ConfirmationKeyController($this);
+        $this->mailerController = new MailerController($this);
         $this->db->connect();
     }
 

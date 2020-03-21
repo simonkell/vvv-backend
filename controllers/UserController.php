@@ -29,6 +29,10 @@ class UserController extends Controller
         $stmt->execute();
         if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
+
+            // Send confirmation! TODO @Jocy!?
+            $this->master->keyController->addNewKeyForUser($this->master->user);
+
             return $this->loginUserWithPassCheck($this->master->user, $pass);
         }
 

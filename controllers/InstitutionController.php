@@ -3,6 +3,7 @@
 
 namespace controllers;
 
+use models\User;
 use models\InstitutionProfile;
 
 class InstitutionController extends Controller
