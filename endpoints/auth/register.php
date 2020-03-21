@@ -39,7 +39,7 @@ if(!$validator->isValidEmail($data->email)) {
 }
 
 // Validate password strength
-$passwordWeaknesses = $validator->validatePassword($data->password)
+$passwordWeaknesses = $validator->validatePassword($data->password);
 if(!empty(passwordWeaknesses)) {
     $master->errorResponse($passwordWeaknesses);
     return;
