@@ -1,10 +1,10 @@
 <?php
 class UserController {
-	private $ROLE_DEFAULT = 0;
-	private $QUERY_REGISTER = "INSERT INTO Users (`Email`, `Password`) VALUES ('%s', '%s')";
-	private $QUERY_UPDATE_PASSWORD = "UPDATE `Password` FROM Users WHERE `ID`='%d'";
-	private $QUERY_USER_BY_EMAIL = "SELECT `ID`, `Password` FROM Users WHERE `Email`='%s' LIMIT 1";
-	private $QUERY_USER_BY_ID = "SELECT `Email`, `Password` FROM Users WHERE `ID`='%s' LIMIT 1";
+	private $ROLE_DEFAULT = 1;
+	private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES ('%s', '%s', '%s', '%s', '%d', '%b')";
+	private $QUERY_UPDATE_PASSWORD = "UPDATE users SET `email`='%s', `forename`='%s', `surname`='%s', `pass`='%s', `role`='%d', `active`='%b' WHERE `ID`='%d'";
+	private $QUERY_USER_BY_EMAIL = "SELECT `id`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
+	private $QUERY_USER_BY_ID = "SELECT `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`='%d' LIMIT 1";
 	
 	private $db;
 	
@@ -17,16 +17,18 @@ class UserController {
 		return password_hash($password, PASSWORD_BCRYPT, $options);
 	}
 	
-	public function registerUser($db, $email, $password) {
+	public function registerUser($email, $forename, $surname, $pass, $role, $active = 0) {
 		$con = $this->db->getConn();
 		
 		$password_hashed = $this->hashPassword($password);
 		
-		$escParamRole = $con->real_escape_string($this->ROLE_DEFAULT);
 		$escParamEmail = $con->real_escape_string($email);
-		$escParamPassword = $con->real_escape_string($password_hashed);
+		$escParamForname = $con->real_escape_string($forename);
+		$escParamSurname = $con->real_escape_string($surname);
+		// pass
+		$escParamRole = $con->real_escape_string($role);
 		
-		return $con->query(sprintf($this->QUERY_REGISTER, $escParamRole, $escParamEmail, $escParamPassword));
+		return $con->query(sprintf($this->QUERY_REGISTER, $escParamEmail, $escParamForname, $escParamSurname, $password_hashed, $escParamRole));
 	}
 	
 	public function changeUserPassword($db, User $user, $passwordNew) {
@@ -34,17 +36,14 @@ class UserController {
 		
 		$password_hashed = $this->hashPassword($password);
 		
-		$escParamPassword = $con->real_escape_string($password_hashed);
-		
-		return $con->query(sprintf($this->QUERY_UPDATE_PASSWORD, $user->id, $escParamPassword));
+		return $con->query(sprintf($this->QUERY_UPDATE_PASSWORD, $user->id, $password_hashed));
 	}
 	
 	public function sendUserPasswordEmail(User $user) {
-		
+		// Ciao
 	}
 	
-	public function getUserByEmail($db, $email) {
-		global $page, $mieterController;
+	public function getUserByEmail($email) {
 		$con = $this->db->getConn();
 		
 		$escParamEmail = $con->real_escape_string($email);
@@ -54,9 +53,13 @@ class UserController {
 			$result = $result->fetch_object();
 			
 			$user = new User;
-			$user->id = $result->ID;
-			$user->email = $escParamEmail;
-			$user->passHash = $result->Password;
+			$user->id = $result->id;
+			$user->email = $result->email;
+			$user->forename = $result->forename;
+			$user->surname = $result->surname;
+			$user->pass = $result->pass;
+			$user->role = $result->role;
+			$user->active = $result->active;
 			
 			return $user;
 		} else {
@@ -66,15 +69,10 @@ class UserController {
 	}
 	
 	public function isExisting($email) {
-		return ($this->getUserByEmail2($email) != null);
-	}
-	
-	public function getUserByEmail2($email) {
-		return $this->getUserByEmail($this->db, $email);
+		return ($this->getUserByEmail($this->db, $email) != null);
 	}
 	
 	public function getUserById($id) {
-		global $page, $mieterController;
 		$con = $this->db->getConn();
 		
 		$escParamId = $con->real_escape_string($id);
@@ -84,10 +82,14 @@ class UserController {
 		if($result && $result->num_rows > 0) {
 			$result = $result->fetch_object();
 			
-			$user = new User();
-			$user->id = $escParamId;
-			$user->email = $result->Email;
-			$user->passHash = $result->Password;
+			$user = new User;
+			$user->id = $result->id;
+			$user->email = $result->email;
+			$user->forename = $result->forename;
+			$user->surname = $result->surname;
+			$user->pass = $result->pass;
+			$user->role = $result->role;
+			$user->active = $result->active;
 			
 			return $user;
 		} else {
@@ -95,7 +97,7 @@ class UserController {
 		}
 	}
 	
-	public function loginUserByEmail($db, User $user, $password) {
+	public function loginUserWithPassCheck(User $user, $password) {
 		if(password_verify($password, $user->passHash)) {
 			$_SESSION[SESSION_NAME_USERID] = $user->id;
 			return true;

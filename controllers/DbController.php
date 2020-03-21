@@ -10,12 +10,10 @@ class DbController
     }
 	
 	public function connect() {
-		$servername = "";
-		$username = "";
-		$password = "";
+		global $servername, $username, $password;
 		
 		// Create connection
-		$this->CONNECTION = new mysqli($servername, $username, $password, "<TABLE>");
+		$this->CONNECTION = new mysqli($servername, $username, $password, "WirVsVirus");
 		
 		// Check connection
 		if($this->CONNECTION->connect_error) {
