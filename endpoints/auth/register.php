@@ -32,6 +32,19 @@ if (!empty($validationErrors)) {
     return;
 }
 
+// Validate email
+if(!$validator->isValidEmail($data->email)) {
+    $master->errorResponse(new HttpError(400, 'Bitte gib eine gültige Email-Adresse an.'));
+    return;
+}
+
+// Validate password strength
+$passwordWeaknesses = $validator->validatePassword($data->password)
+if(!empty(passwordWeaknesses)) {
+    $master->errorResponse($passwordWeaknesses);
+    return;
+}
+
 if ($master->userController->registerUser($data->email, $data->forename, $data->surname, $data->pass, $master->userController->ROLE_DEFAULT)) {
     http_response_code(200);
     echo json_encode($master->user);
