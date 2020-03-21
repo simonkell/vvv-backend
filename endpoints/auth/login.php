@@ -41,6 +41,7 @@ $master->user = $master->userController->getUserByEmail($data->email);
 if ($master->userController->loginUserWithPassCheck($master->user, $data->pass)) {
 	http_response_code(200);
     $master->returnObjectAsJson($master->user);
+    return;
 } else {
     http_response_code(401);
     return;

@@ -39,12 +39,12 @@ if (!empty($validationErrors)) {
 // The user that should be linked does not exist
 $master->user = $master->userController->getUserById($data->user_id);
 if(!$master->user) {
-    $master->errorResponse(new HttpError(400, 'Das Sucher-Profil des angeforderten Nutzers konnte nicht verändert werden, weil dieser nicht existiert.'));
+    $master->errorResponse(new HttpError(400, 'Das Sucher-Profil des angeforderten Nutzers konnte nicht angelegt werden, weil dieser nicht existiert.'));
     return;
 }
 
 // Try to update profile. Timestamp for update will be set inside update function
-if ($master->institutionController->updateInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $data->user_id)) {
+if ($master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $data->user_id)) {
     http_response_code(200);
     $master->returnObjectAsJson($master->user);
     return;
