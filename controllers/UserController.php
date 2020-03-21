@@ -7,15 +7,16 @@ use models\User;
 class UserController extends Controller
 {
     public $ROLE_DEFAULT = 1;
-    private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES ('%s', '%s', '%s', '%s', '%d', '%b')";
-    private $QUERY_UPDATE_PASSWORD = "UPDATE users SET `email`='%s', `forename`='%s', `surname`='%s', `pass`='%s', `role`='%d', `active`='%b' WHERE `ID`='%d'";
-    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
-    private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`='%d' LIMIT 1";
+    private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?,?,?,?,?,?)";
+    private $QUERY_UPDATE_PASSWORD = "UPDATE `users` SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`=? LIMIT 1";
+    private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
 
     private function hashPassword($password)
     {
-        $options = ['cost' => 11];
+        //default is 12, the higher the better
+        $options = ['cost' => 12];
         return password_hash($password, PASSWORD_BCRYPT, $options);
     }
 
@@ -23,28 +24,48 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
+        if ($con->connect_error) {
+            error_log("Connection failed: " . $con->connect_error);
+            //die("Connection failed: ".$con->connect_error);
+        }
+
         $password_hashed = $this->hashPassword($pass);
 
-        $escParamEmail = $con->real_escape_string($email);
-        $escParamForname = $con->real_escape_string($forename);
-        $escParamSurname = $con->real_escape_string($surname);
-        // pass
-        $escParamRole = $con->real_escape_string($role);
-
-        $con->query(sprintf($this->QUERY_REGISTER, $escParamEmail, $escParamForname, $escParamSurname, $password_hashed, $escParamRole, $active));
+        try {
+            $sprep = $con->prepare($this->QUERY_REGISTER);
+            $sprep->bindParam('ssssdi', $email, $forename, $surname, $password_hashed, $role, $active);
+            $sprep->execute();
+            $sprep->close();
+        } catch (PDOException $e) {
+            error_log("Error: " . $e->getMessage());
+        }
 
         $this->master->user = $this->getUserByEmail($email);
 
         return $this->loginUserWithPassCheck($this->master->user, $pass);
     }
 
-    public function changeUserPassword($db, User $user, $passNew)
+    public function changeUserPassword(User $user, $passNew)
     {
         $con = $this->master->db->getConn();
 
+        if ($con->connect_error) {
+            error_log("Connection failed: " . $con->connect_error);
+        }
+
         $password_hashed = $this->hashPassword($passNew);
 
-        return $con->query(sprintf($this->QUERY_UPDATE_PASSWORD, $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id));
+        $status = false;
+        try {
+            $sprep = $con->prepare($this->QUERY_UPDATE_PASSWORD);
+            $sprep->bindParam('ssssdid', $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id);
+            $status = $sprep->execute();
+            $sprep->close();
+        } catch (PDOException $e) {
+            error_log("Error: " . $e->getMessage());
+        }
+
+        return $status;
     }
 
     public function sendUserPasswordEmail(User $user)
@@ -56,9 +77,21 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $escParamEmail = $con->real_escape_string($email);
+        if ($con->connect_error) {
+            error_log("Connection failed: " . $con->connect_error);
+        }
 
-        $result = $con->query(sprintf($this->QUERY_USER_BY_EMAIL, $escParamEmail));
+        $result = false;
+        try {
+            $sprep = $con->prepare($this->QUERY_USER_BY_EMAIL);
+            $sprep->bindParam('s', $email);
+            $sprep->execute();
+            $result = $sprep->get_result();
+            $sprep->close();
+        }catch(PDOException $e){
+            error_log("Error: " . $e->getMessage());
+        }
+
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
 
@@ -78,9 +111,20 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $escParamId = $con->real_escape_string($id);
+        if ($con->connect_error) {
+            error_log("Connection failed: " . $con->connect_error);
+        }
 
-        $result = $con->query(sprintf($this->QUERY_USER_BY_ID, $escParamId));
+        $result = false;
+
+        try {
+            $sprep = $con->prepare($this->QUERY_USER_BY_ID);
+            $sprep->bindParam('d', $id);
+            $result = $sprep->get_result();
+            $sprep->close();
+        }catch(PDOException $e){
+            error_log("Error: " . $e->getMessage());
+        }
 
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
