@@ -25,22 +25,24 @@ class UserController extends Controller
 
         $password_hashed = $this->hashPassword($pass);
 
-        $stmt = $con->prepare(QUERY_REGISTER);
-        $stmt->bind_param("sss", $forename, $surname, $email);
-        if($con->query( $stmt)) {
-
+        $stmt = $con->prepare($this->QUERY_REGISTER);
+        $stmt->bind_param("ssssii", $forename, $surname, $email, $password_hashed, $role, $active);
+        if($con->query($stmt)) {
             $this->master->user = $this->getUserByEmail($email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
-        }else{ return false;}
+        }
+
+        return false;
     }
-    public function changeUser( User $user)
+
+    public function changeUser(User $user)
     {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare(QUERY_UPDATE_USER);
-        $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->$pass, $user->role, $user->active, $user->id);
-        return $con->query( $stmt);
+        $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->pass, $user->role, $user->active, $user->id);
+        return $con->query($stmt);
     }
 
     public function changeUserPassword(User $user, $passNew)
@@ -49,7 +51,7 @@ class UserController extends Controller
 
         $password_hashed = $this->hashPassword($passNew);
 
-        $stmt = $con->prepare(QUERY_UPDATE_USER);
+        $stmt = $con->prepare($this->QUERY_UPDATE_USER);
         $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id);
         return $con->query( $stmt);
     }
@@ -63,7 +65,7 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $stmt = $con->prepare(QUERY_USER_BY_EMAIL);
+        $stmt = $con->prepare($this->QUERY_USER_BY_EMAIL);
         $stmt->bind_param("s", $email);
         $result = $con->query( $stmt);
         if ($result && $result->num_rows > 0) {
@@ -85,9 +87,9 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $stmt = $con->prepare(QUERY_USER_BY_ID);
+        $stmt = $con->prepare($this->QUERY_USER_BY_ID);
         $stmt->bind_param("i", (int) $id);
-        $result = $con->query( $stmt);
+        $result = $con->query($stmt);
 
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
