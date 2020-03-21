@@ -27,11 +27,12 @@ class UserController extends Controller
 
         $stmt = $con->prepare(QUERY_REGISTER);
         $stmt->bind_param("sss", $forename, $surname, $email);
-        $con->query( $stmt);
+        if($con->query( $stmt)) {
 
-        $this->master->user = $this->getUserByEmail($email);
+            $this->master->user = $this->getUserByEmail($email);
 
-        return $this->loginUserWithPassCheck($this->master->user, $pass);
+            return $this->loginUserWithPassCheck($this->master->user, $pass);
+        }else{ return flase;}
     }
 
     public function changeUserPassword($db, User $user, $passNew)
