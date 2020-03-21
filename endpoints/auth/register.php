@@ -2,6 +2,7 @@
 
 use controllers\MasterController;
 use tools\Validator;
+use tools\HttpError;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 
@@ -39,7 +40,7 @@ if(!$validator->isValidEmail($data->email)) {
 }
 
 // Validate password strength
-$passwordWeaknesses = $validator->validatePassword($data->password);
+$passwordWeaknesses = $validator->validatePassword($data->pass);
 if(!empty(passwordWeaknesses)) {
     $master->errorResponse($passwordWeaknesses);
     return;

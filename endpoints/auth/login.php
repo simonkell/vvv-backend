@@ -1,5 +1,7 @@
 <?php
 use controllers\MasterController;
+use tools\HttpError;
+use tools\Validator;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 spl_autoload_register(function ($class) {
@@ -35,7 +37,7 @@ if (!$master->userController->isExisting($data->email)) {
     return;
 }
 
-if ($master->userController->loginUserWithPassCheck($user, $jsonPassword)) {
+if ($master->userController->loginUserWithPassCheck($data->email, $data->pass)) {
 	http_response_code(200);
     echo json_encode($master->user);
 } else {
