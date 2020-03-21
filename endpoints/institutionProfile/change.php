@@ -5,15 +5,7 @@ use tools\Validator;
 use tools\HttpError;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
-
-spl_autoload_register(function ($class) {
-    $file = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
-    if (file_exists($file)) {
-        require $file;
-        return true;
-    }
-    return false;
-});
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
 // Be sure the user is logged in!
 if(!$master->isSessionValid()) {
