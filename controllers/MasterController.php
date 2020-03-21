@@ -1,29 +1,28 @@
 <?php
 	session_start();
 	
-	$TITLE = "VVV Backend";
-	
 	define("SESSION_NAME_USERID", "userId");
+	
+	// CONFIG
+	include("config.php");
 	
 	// MODELS
 	include("models/User.php");
 	
 	// CONTROLLERS
-	include("controllers/PageController.php");
+	include("controllers/DbController.php");
+	include("controllers/UserController.php");
 	// TODO: ResponseController? Invalid permission response, session expired response, no session response
 	
-	global $page;
 	$db = new DbController();
 	$userController = new UserController($db);
 	
 	$db->connect();
 	
 	class MasterController {
-		public $page, $db, $userController;
+		public $db, $userController;
 		
-		public function __construct($page, $db, $userController) {
-			$this->page = $page;
-			
+		public function __construct($db, $userController) {
 			$this->db = $db;
 			$this->userController = $userController;
 		}
