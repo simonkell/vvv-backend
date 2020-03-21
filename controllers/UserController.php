@@ -26,8 +26,9 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($pass);
 
         $stmt = $con->prepare($this->QUERY_REGISTER);
-        $stmt->bind_param("ssssii", $forename, $surname, $email, $password_hashed, $role, $active);
-        if($con->query($stmt)) {
+        $stmt->bind_param("ssssii", $email, $forename, $surname, $password_hashed, $role, $active);
+        $stmt->execute();
+        if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
