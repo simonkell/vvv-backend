@@ -86,7 +86,7 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare(QUERY_USER_BY_ID);
-        $stmt->bind_param("i", int $id);
+        $stmt->bind_param("i", (int) $id);
         $result = $con->query( $stmt);
 
         if ($result && $result->num_rows > 0) {
