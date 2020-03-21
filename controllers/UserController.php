@@ -9,7 +9,7 @@ class UserController extends Controller
     public $ROLE_DEFAULT = 1;
     private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?, ?, ?, ?, ?, ?)";
     private $QUERY_UPDATE_USER = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
-    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`=? LIMIT 1";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE LOWER(`email`)=? LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
 
@@ -26,9 +26,8 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($pass);
 
         $stmt = $con->prepare($this->QUERY_REGISTER);
-        $stmt->bind_param("ssssii", $email, $forename, $surname, $password_hashed, $role, $active);
-        $stmt->execute();
-        if (!$stmt->error) {
+        $stmt->bind_param("ssssii", $forename, $surname, $email, $password_hashed, $role, $active);
+        if($con->query($stmt)) {
             $this->master->user = $this->getUserByEmail($email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
@@ -90,12 +89,11 @@ class UserController extends Controller
 
     public function isExisting($email)
     {
-        return ($this->getUserByEmail($email) != null);
+        return ($this->getUserByEmail(strtolower($email)) != null);
     }
 
     public function getUserById($id)
     {
-        echo "user_id = " . $id;
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);

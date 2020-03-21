@@ -40,7 +40,7 @@ class InstitutionController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_BY_ID);
-        $stmt->bind_param("i", $id);
+        $stmt->bind_param("i", $idSql = ((int) $id));
         $result = $con->query($stmt);
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
