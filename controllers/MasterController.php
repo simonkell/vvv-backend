@@ -4,7 +4,7 @@
 	define("SESSION_NAME_USERID", "userId");
 	
 	// CONFIG
-	include("config.php");
+	include("../config.php");
 	
 	// MODELS
 	include("models/User.php");
