@@ -1,5 +1,6 @@
 <?php
 
+/* SETUP */
 use controllers\MasterController;
 use tools\HttpError;
 use tools\Validator;
@@ -7,11 +8,12 @@ use tools\Validator;
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
+$master = new MasterController();
+/* SETUP */
+
 const REQUIRED_FIELDS = ['email', 'pass'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $master = new MasterController();
-
     $dataContent = file_get_contents("php://input");
     if (!$dataContent) {
         http_response_code(400);

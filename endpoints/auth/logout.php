@@ -1,13 +1,13 @@
 <?php
 
+/* SETUP */
 use controllers\MasterController;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-
-
 $master = new MasterController();
+/* SETUP */
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $master->userController->logout();
