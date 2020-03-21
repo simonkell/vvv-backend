@@ -88,7 +88,7 @@ class UserController extends Controller
 
     public function isExisting($email)
     {
-        return ($this->getUserByEmail(strtolower($email)) != null);
+        return ($this->getUserByEmail($email) != null);
     }
 
     public function getUserById($id)
