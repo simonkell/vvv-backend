@@ -1,9 +1,11 @@
 <?php
+
 use controllers\MasterController;
-use tools\HttpError;
 use tools\Validator;
+use tools\HttpError;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
+
 spl_autoload_register(function ($class) {
     $file = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
     if (file_exists($file)) {
@@ -13,10 +15,9 @@ spl_autoload_register(function ($class) {
     return false;
 });
 
-const REQUIRED_FIELDS = ['email', 'pass'];
+const REQUIRED_FIELDS = ['email_old', 'email_new', 'pass_old', 'pass_new'];
 $master = new MasterController();
 
-/* LOGIN REQUEST */
 $dataContent = file_get_contents("php://input");
 if (!$dataContent) {
     http_response_code(400);
@@ -24,6 +25,7 @@ if (!$dataContent) {
 }
 
 $data = json_decode($dataContent);
+
 $validator = new Validator($data, REQUIRED_FIELDS);
 $validationErrors = $validator->validate();
 if (!empty($validationErrors)) {
@@ -31,18 +33,32 @@ if (!empty($validationErrors)) {
     return;
 }
 
-if (!$master->userController->isExisting($data->email)) {
-	$master->errorResponse(new HttpError(401, 'Es konnte kein Benutzer zu dieser Email-Adresse gefunden werden.'));
+// Validate email
+if(!$validator->isValidEmail($data->email)) {
+    $master->errorResponse(new HttpError(400, 'Bitte gib eine gültige Email-Adresse an.'));
     return;
 }
 
-$master->user = $master->userController->getUserByEmail($data->email);
-if ($master->userController->loginUserWithPassCheck($master->user, $data->pass)) {
-	http_response_code(200);
-    $master->returnObjectAsJson($master->user);
+// Validate password strength
+$passwordWeaknesses = $validator->validatePassword($data->pass_new);
+if(count($passwordWeaknesses) > 0) {
+    $master->errorResponse($passwordWeaknesses);
     return;
+}
+
+User $user = getUserByEmail($data->email_old);
+
+if ($master->userController->loginUserWithPassCheck($user, $data->pass_old)) {
+    if ($master->userController->changeUserPassword($user, $data->pass_new)) {
+        http_response_code(200);
+        return;
+    } else {
+        http_response_code(400);
+        return;
+    }
 } else {
     http_response_code(401);
     return;
 }
+
 ?>
