@@ -25,14 +25,12 @@ class MasterController
         $this->db->connect();
     }
 
-    public function isSessionValid($sessionName)
+    public function isSessionValid()
     {
-        if (isset($_SESSION[$sessionName])) {
-            if (strcmp($sessionName, SESSION_NAME_USERID) == 0) {
-                $user = $this->userController->getUserById($_SESSION[$sessionName]);
+        if (isset($_SESSION[SESSION_NAME_USERID])) {
+                $user = $this->userController->getUserById($_SESSION[SESSION_NAME_USERID]);
 
                 if ($user != null) {
-                    // TODO: Check if id is legit (???)
                     if (true) {
                         return true;
                     } else {
@@ -40,10 +38,6 @@ class MasterController
                         // ... <useless else>
                     }
                 }
-            } else {
-                // No further validations.
-                // NEW VALIDATION METHODS HERE!
-            }
         }
 
         return false;

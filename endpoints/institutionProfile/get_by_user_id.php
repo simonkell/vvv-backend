@@ -15,6 +15,11 @@ spl_autoload_register(function ($class) {
     return false;
 });
 
+if(!$master->isSessionValid()) {
+    $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
+    return;
+}
+
 const REQUIRED_FIELDS = ['user_id'];
 $master = new MasterController();
 
