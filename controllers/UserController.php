@@ -20,7 +20,7 @@ class UserController {
 	public function registerUser($email, $forename, $surname, $pass, $role, $active = 0) {
 		$con = $this->db->getConn();
 		
-		$password_hashed = $this->hashPassword($password);
+		$password_hashed = $this->hashPassword($pass);
 		
 		$escParamEmail = $con->real_escape_string($email);
 		$escParamForname = $con->real_escape_string($forename);
@@ -28,15 +28,15 @@ class UserController {
 		// pass
 		$escParamRole = $con->real_escape_string($role);
 		
-		return $con->query(sprintf($this->QUERY_REGISTER, $escParamEmail, $escParamForname, $escParamSurname, $password_hashed, $escParamRole));
+		return $con->query(sprintf($this->QUERY_REGISTER, $escParamEmail, $escParamForname, $escParamSurname, $password_hashed, $escParamRole, $active));
 	}
 	
-	public function changeUserPassword($db, User $user, $passwordNew) {
+	public function changeUserPassword($db, User $user, $passNew) {
 		$con = $this->db->getConn();
 		
-		$password_hashed = $this->hashPassword($password);
+		$password_hashed = $this->hashPassword($passNew);
 		
-		return $con->query(sprintf($this->QUERY_UPDATE_PASSWORD, $user->id, $password_hashed));
+		return $con->query(sprintf($this->QUERY_UPDATE_PASSWORD, $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id));
 	}
 	
 	public function sendUserPasswordEmail(User $user) {
