@@ -31,7 +31,7 @@ class UserController extends Controller
             $this->master->user = $this->getUserByEmail($email);
 
             // Send confirmation! TODO @Jocy!?
-            $key = $this->master->keyController->addNewKeyForUser($this->master->user);
+            $key = $this->master->confirmationKeyController->addNewKeyForUser($this->master->user);
             $this->master->mailerController->sendMail($key, $this->master->user->email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
@@ -101,8 +101,8 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);
-        $isSql = (int) $id;
-        $stmt->bind_param("i", $isSql);
+        $idSql = (int) $id;
+        $stmt->bind_param("i", $idSql);
 
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();

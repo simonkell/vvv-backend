@@ -69,8 +69,8 @@ class ConfirmationKeyController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_SELECT_BY_USER_ID);
-        $isSql = (int) $user->id;
-        $stmt->bind_param("i", $isSql);
+        $idSql = (int) $user->id;
+        $stmt->bind_param("i", $idSql);
 
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
