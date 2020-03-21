@@ -1,4 +1,5 @@
 <?php
+
 namespace controllers;
 
 use tools\HttpError;
@@ -14,10 +15,13 @@ class MasterController
 {
     public $db, $userController, $user;
 
+    public $institutionController;
+
     public function __construct()
     {
         $this->db = new DbController();;
         $this->userController = $userController = new UserController($this);
+        $this->institutionController = new InstitutionController($this);
         $this->db->connect();
     }
 
