@@ -58,5 +58,6 @@ class Validator
 		if (!preg_match("#[a-zA-Z]+#", $password)) {
 			array_push($errors, new HttpError(400, 'Dein Passwort sollte mindestens einen Buchstaben enthalten.'));
 		}
+		return $errors;
 	}
 }
