@@ -2,13 +2,6 @@
 	include("controllers/MasterController.php"); // init, settings, etc
 	$master = new MasterController($db, $userController);
 	
-	/* LOGOUT */
-	if(isset($_GET["logout"])) { // Alternatively: rest request over json? => requestController!
-		$userController->logout();
-		http_response_code(200);
-		return;
-	}
-	
 	/* LOGIN REQUEST */
 	$dataContent = file_get_contents("php://input");
 	if(!$dataContent) {
