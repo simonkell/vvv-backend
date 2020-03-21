@@ -49,7 +49,8 @@ if(count($passwordWeaknesses) > 0) {
 User $user = getUserByEmail($data->email_old);
 
 if ($master->userController->loginUserWithPassCheck($user, $data->pass_old)) {
-    if ($master->userController->changeUserPassword($user, $data->pass_new)) {
+    $user->pass= $passNew;
+    if ($master->userController->changeUser($user)) {
         http_response_code(200);
         return;
     } else {
