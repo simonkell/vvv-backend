@@ -32,7 +32,6 @@ if (!empty($validationErrors)) {
 }
 
 if (!$master->userController->isExisting($data->email)) {
-    http_response_code(401);
 	$master->errorResponse(new HttpError(401, 'Es konnte kein Benutzer zu dieser Email-Adresse gefunden werden.'));
     return;
 }

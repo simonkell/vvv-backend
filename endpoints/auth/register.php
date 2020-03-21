@@ -39,6 +39,12 @@ if(!$validator->isValidEmail($data->email)) {
     return;
 }
 
+// Already an account with this email?
+if ($master->userController->isExisting($data->email)) {
+    $master->errorResponse(new HttpError(400, 'Es existiert bereits ein Benutzer mit dieser Email-Adresse.'));
+    return;
+}
+
 // Validate password strength
 $passwordWeaknesses = $validator->validatePassword($data->pass);
 if(count($passwordWeaknesses) > 0) {
