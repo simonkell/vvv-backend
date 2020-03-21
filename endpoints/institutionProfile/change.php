@@ -15,6 +15,7 @@ spl_autoload_register(function ($class) {
     return false;
 });
 
+// Be sure the user is logged in!
 if(!$master->isSessionValid()) {
     $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
     return;

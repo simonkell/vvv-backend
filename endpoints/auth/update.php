@@ -15,7 +15,13 @@ spl_autoload_register(function ($class) {
     return false;
 });
 
-const REQUIRED_FIELDS = ['email_old', 'email_new', 'pass_old', 'pass_new'];
+// Be sure the user is logged in!
+if(!$master->isSessionValid()) {
+    $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
+    return;
+}
+
+const REQUIRED_FIELDS = ['email', 'forename', 'surname'];
 $master = new MasterController();
 
 $dataContent = file_get_contents("php://input");
@@ -46,10 +52,13 @@ if(count($passwordWeaknesses) > 0) {
     return;
 }
 
-User $user = getUserByEmail($data->email_old);
+// Change everything of user except password! see updatePassword.php
+$user = getUserByEmail($data->email_old);
+if($_SESSION[SESSION_NAME_USERID] == $user->id) {
+    $user->email = $data->email;
+    $user->forename = $data->forename;
+    $user->surname = $data->surname;
 
-if ($master->userController->loginUserWithPassCheck($user, $data->pass_old)) {
-    $user->pass= $passNew;
     if ($master->userController->changeUser($user)) {
         http_response_code(200);
         return;
@@ -58,7 +67,7 @@ if ($master->userController->loginUserWithPassCheck($user, $data->pass_old)) {
         return;
     }
 } else {
-    http_response_code(401);
+    $master->errorResponse(new HttpError(401, 'Das Passwort war nicht korrekt.'));
     return;
 }
 
