@@ -76,6 +76,7 @@ class UserController extends Controller
             $this->master->user = new User($result);
             return $this->master->user;
         } else {
+            echo mysqli_info($con);
             return null;
         }
     }
