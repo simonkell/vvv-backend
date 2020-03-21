@@ -7,10 +7,10 @@ use models\User;
 class UserController extends Controller
 {
     public $ROLE_DEFAULT = 1;
-    private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES ('%s', '%s', '%s', '%s', '%d', '%b')";
-    private $QUERY_UPDATE_PASSWORD = "UPDATE users SET `email`='%s', `forename`='%s', `surname`='%s', `pass`='%s', `role`='%d', `active`='%b' WHERE `ID`='%d'";
+    private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?, ?, ?, ?, ?, ?)";
+    private $QUERY_UPDATE_PASSWORD = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
     private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
-    private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`='%d' LIMIT 1";
+    private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
 
     private function hashPassword($password)
@@ -25,13 +25,9 @@ class UserController extends Controller
 
         $password_hashed = $this->hashPassword($pass);
 
-        $escParamEmail = $con->real_escape_string($email);
-        $escParamForname = $con->real_escape_string($forename);
-        $escParamSurname = $con->real_escape_string($surname);
-        // pass
-        $escParamRole = $con->real_escape_string($role);
-
-        $con->query(sprintf($this->QUERY_REGISTER, $escParamEmail, $escParamForname, $escParamSurname, $password_hashed, $escParamRole, $active));
+        $stmt = $con->prepare(QUERY_REGISTER);
+        $stmt->bind_param("sss", $forename, $surname, $email);
+        $con->query( $stmt);
 
         $this->master->user = $this->getUserByEmail($email);
 
@@ -44,7 +40,9 @@ class UserController extends Controller
 
         $password_hashed = $this->hashPassword($passNew);
 
-        return $con->query(sprintf($this->QUERY_UPDATE_PASSWORD, $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id));
+        $stmt = $con->prepare(QUERY_UPDATE_PASSWORD);
+        $stmt->bind_param("ssssibi", $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id);
+        return $con->query( $stmt);
     }
 
     public function sendUserPasswordEmail(User $user)
@@ -56,9 +54,9 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $escParamEmail = $con->real_escape_string($email);
-
-        $result = $con->query(sprintf($this->QUERY_USER_BY_EMAIL, $escParamEmail));
+        $stmt = $con->prepare(QUERY_USER_BY_EMAIL);
+        $stmt->bind_param("s", $email);
+        $result = $con->query( $stmt);
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
 
@@ -78,9 +76,10 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $escParamId = $con->real_escape_string($id);
 
-        $result = $con->query(sprintf($this->QUERY_USER_BY_ID, $escParamId));
+        $stmt = $con->prepare(QUERY_USER_BY_ID);
+        $stmt->bind_param("i", $id);
+        $result =  $con->query( $stmt);
 
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
