@@ -2,61 +2,55 @@
 
 use controllers\MasterController;
 use tools\Validator;
-use tools\HttpError;
 
-include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
-
-spl_autoload_register(function ($class) {
-    $file = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
-    if (file_exists($file)) {
-        require $file;
-        return true;
-    }
-    return false;
-});
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "config.php");
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
 const REQUIRED_FIELDS = ['email', 'pass'];
-$master = new MasterController();
 
-$dataContent = file_get_contents("php://input");
-if (!$dataContent) {
-    http_response_code(400);
-    return;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $master = new MasterController();
 
-$data = json_decode($dataContent);
+    $dataContent = file_get_contents("php://input");
+    if (!$dataContent) {
+        http_response_code(400);
+        return;
+    }
 
-$validator = new Validator($data, REQUIRED_FIELDS);
-$validationErrors = $validator->validate();
-if (!empty($validationErrors)) {
-    $master->errorResponse($validationErrors);
-    return;
-}
+    $data = json_decode($dataContent);
 
-// Validate email
-if(!$validator->isValidEmail($data->email)) {
-    $master->errorResponse(new HttpError(400, 'Bitte gib eine gültige Email-Adresse an.'));
-    return;
-}
+    $validator = new Validator($data, REQUIRED_FIELDS);
+    $validationErrors = $validator->validate();
+    if (!empty($validationErrors)) {
+        $master->errorResponse($validationErrors);
+        return;
+    }
 
-// Already an account with this email?
-if ($master->userController->isExisting($data->email)) {
-    $master->errorResponse(new HttpError(400, 'Es existiert bereits ein Benutzer mit dieser Email-Adresse.'));
-    return;
-}
+    // Validate email
+    if (!$validator->isValidEmail($data->email)) {
+        $master->errorResponse(new HttpError(400, 'Bitte gib eine gültige Email-Adresse an.'));
+        return;
+    }
 
-// Validate password strength
-$passwordWeaknesses = $validator->validatePassword($data->pass);
-if(count($passwordWeaknesses) > 0) {
-    $master->errorResponse($passwordWeaknesses);
-    return;
-}
+    // Already an account with this email?
+    if ($master->userController->isExisting($data->email)) {
+        $master->errorResponse(new HttpError(400, 'Es existiert bereits ein Benutzer mit dieser Email-Adresse.'));
+        return;
+    }
 
-if ($master->userController->registerUser($data->email, "", "", $data->pass, $master->userController->ROLE_DEFAULT)) {
-    http_response_code(200);
-    $master->returnObjectAsJson($master->user);
-    return;
-} else {
-    http_response_code(401);
-    return;
+    // Validate password strength
+    $passwordWeaknesses = $validator->validatePassword($data->pass);
+    if (count($passwordWeaknesses) > 0) {
+        $master->errorResponse($passwordWeaknesses);
+        return;
+    }
+
+    if ($master->userController->registerUser($data->email, "", "", $data->pass, $master->userController->ROLE_DEFAULT)) {
+        http_response_code(200);
+        $master->returnObjectAsJson($master->user);
+        return;
+    } else {
+        http_response_code(401);
+        return;
+    }
 }
