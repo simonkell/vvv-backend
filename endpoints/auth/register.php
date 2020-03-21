@@ -3,7 +3,7 @@
 use controllers\MasterController;
 use tools\Validator;
 
-include("..\..\config.php");
+include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 
 spl_autoload_register(function ($class) {
     $file = '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
