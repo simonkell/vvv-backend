@@ -1,5 +1,3 @@
 <?php
-    echo phpversion();
-    echo "Hallo Welt";
-    echo "Jetzt aber";
+    echo "Hallo Welt! PHP-Version dieses Servers: " + phpversion();
 ?>

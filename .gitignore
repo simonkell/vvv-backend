@@ -1,4 +1,4 @@
-#ignore config.php-File
+#ignore some files and folders
 config.php
 WirVsVirus.sql
 .vscode

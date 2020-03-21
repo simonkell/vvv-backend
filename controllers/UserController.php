@@ -9,7 +9,7 @@ class UserController extends Controller
     public $ROLE_DEFAULT = 1;
     private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?, ?, ?, ?, ?, ?)";
     private $QUERY_UPDATE_USER = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
-    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`=? LIMIT 1";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE LOWER(`email`)=? LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
 
@@ -26,7 +26,7 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($pass);
 
         $stmt = $con->prepare($this->QUERY_REGISTER);
-        $stmt->bind_param("ssssii", $forename, $surname, $email, $password_hashed, $role, $active);
+        $stmt->bind_param("ssssii", $forename, $surname, strtolower($email), $password_hashed, $role, $active);
         if($con->query($stmt)) {
             $this->master->user = $this->getUserByEmail($email);
 
@@ -68,7 +68,7 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_EMAIL);
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", strtolower($email));
         $result = $con->query( $stmt);
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
@@ -76,13 +76,14 @@ class UserController extends Controller
             $this->master->user = new User($result);
             return $this->master->user;
         } else {
+            echo mysqli_info($con);
             return null;
         }
     }
 
     public function isExisting($email)
     {
-        return ($this->getUserByEmail($email) != null);
+        return ($this->getUserByEmail(strtolower($email)) != null);
     }
 
     public function getUserById($id)
