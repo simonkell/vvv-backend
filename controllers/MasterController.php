@@ -64,8 +64,13 @@ class MasterController
             http_response_code($httpError->getCode());
             $messages = [$httpError->getMessage()];
         }
-        echo json_encode((object)["error" => true, "messages" => $messages]);
+
+        $this->returnObjectAsJson((object)["error" => true, "messages" => $messages]);
+    }
+
+    public function returnObjectAsJson($obj) {
         header('Content-Type: application/json');
+        echo json_encode($obj);
     }
 }
 

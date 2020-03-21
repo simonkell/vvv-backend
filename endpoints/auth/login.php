@@ -37,9 +37,10 @@ if (!$master->userController->isExisting($data->email)) {
     return;
 }
 
-if ($master->userController->loginUserWithPassCheck($data->email, $data->pass)) {
+$master->user = $master->userController->getUserByEmail($data->email);
+if ($master->userController->loginUserWithPassCheck($master->user, $data->pass)) {
 	http_response_code(200);
-    echo json_encode($master->user);
+    $master->returnObjectAsJson($master->user);
 } else {
     http_response_code(401);
     return;

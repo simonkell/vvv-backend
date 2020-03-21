@@ -48,7 +48,7 @@ if(count($passwordWeaknesses) > 0) {
 
 if ($master->userController->registerUser($data->email, $data->forename, $data->surname, $data->pass, $master->userController->ROLE_DEFAULT)) {
     http_response_code(200);
-    echo json_encode($master->user);
+    $master->returnObjectAsJson($master->user);
     return;
 } else {
     http_response_code(401);
