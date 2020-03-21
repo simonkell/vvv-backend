@@ -2,6 +2,7 @@
 
 use controllers\MasterController;
 use tools\Validator;
+use tools\HttpError;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 
