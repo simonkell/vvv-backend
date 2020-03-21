@@ -8,8 +8,8 @@ class UserController extends Controller
 {
     public $ROLE_DEFAULT = 1;
     private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?, ?, ?, ?, ?, ?)";
-    private $QUERY_UPDATE_PASSWORD = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
-    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
+    private $QUERY_UPDATE_USER = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='?' LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
 
@@ -40,7 +40,7 @@ class UserController extends Controller
 
         $password_hashed = $this->hashPassword($passNew);
 
-        $stmt = $con->prepare(QUERY_UPDATE_PASSWORD);
+        $stmt = $con->prepare(QUERY_UPDATE_USER);
         $stmt->bind_param("ssssibi", $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id);
         return $con->query( $stmt);
     }
