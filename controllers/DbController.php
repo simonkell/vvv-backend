@@ -3,7 +3,7 @@ namespace controllers;
 
 use mysqli;
 
-class DbController
+class DbController extends Controller
 {
     private $CONNECTION;
 
@@ -23,7 +23,7 @@ class DbController
 
         // Check connection
         if ($this->CONNECTION->connect_error) {
-			$master->errorResponse(new HttpError(500, 'Connection to server could not be established.'));
+			$this->master->errorResponse(new HttpError(500, 'Connection to server could not be established.'));
         }
     }
 

@@ -19,7 +19,7 @@ class MasterController
 
     public function __construct()
     {
-        $this->db = new DbController();;
+        $this->db = new DbController($this);
         $this->userController = $userController = new UserController($this);
         $this->institutionController = new InstitutionController($this);
         $this->db->connect();
@@ -64,8 +64,13 @@ class MasterController
             http_response_code($httpError->getCode());
             $messages = [$httpError->getMessage()];
         }
-        echo json_encode((object)["error" => true, "messages" => $messages]);
+
+        $this->returnObjectAsJson((object)["error" => true, "messages" => $messages]);
+    }
+
+    public function returnObjectAsJson($obj) {
         header('Content-Type: application/json');
+        echo json_encode($obj);
     }
 }
 
