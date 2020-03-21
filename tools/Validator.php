@@ -23,7 +23,7 @@ class Validator
             $found[$requiredAttribute] = false;
         }
 
-        foreach ($this->obj as $attr) {
+        foreach ($this->obj as $attr => $value) {
             if (isset($found[$attr])) {
                 $found[$attr] = true;
             }
