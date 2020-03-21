@@ -87,6 +87,7 @@ class UserController extends Controller
 
     public function getUserById($id)
     {
+        echo "user_id = " . $id;
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);
