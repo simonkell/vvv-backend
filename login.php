@@ -41,7 +41,7 @@
 	
 	if($userController->loginUserWithPassCheck($user, $jsonPassword)) {
 		http_response_code(200);
-		echo json_encode(array("message" => "Anmeldung erfolgreich."));
+		echo json_encode($user);
 		return;
 	} else {
 		http_response_code(401);
