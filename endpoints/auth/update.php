@@ -50,7 +50,7 @@ User $user = getUserByEmail($data->email_old);
 
 if ($master->userController->loginUserWithPassCheck($user, $data->pass_old)) {
     $user->pass= $passNew;
-    if ($master->userController->changeUserPassword($user)) {
+    if ($master->userController->changeUser($user)) {
         http_response_code(200);
         return;
     } else {
