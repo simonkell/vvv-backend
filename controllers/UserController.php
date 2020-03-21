@@ -45,6 +45,8 @@ class UserController extends Controller
 
     public function changeUserPassword(User $user, $passNew)
     {
+        //$user->pass= $passNew;
+        //this->changeUser( $user);
         $con = $this->master->db->getConn();
 
         $password_hashed = $this->hashPassword($passNew);
