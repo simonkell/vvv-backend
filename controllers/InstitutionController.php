@@ -57,7 +57,7 @@ class InstitutionController extends Controller
         return null;
     }
 
-    public function getInstitutionProfileByUserId(User $user) {
+    public function getInstitutionProfileByUser(User $user) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_BY_USERID);
