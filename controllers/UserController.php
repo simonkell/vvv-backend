@@ -29,7 +29,6 @@ class UserController extends Controller
         $stmt->execute();
         if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
-
             return $this->loginUserWithPassCheck($this->master->user, $pass);
         }
 
@@ -75,10 +74,10 @@ class UserController extends Controller
         $row = $stmt->get_result()->fetch_assoc();
 
         if (!empty($row)) {
-            $this->master->user = new User($row);
+            $user = new User($row);
             $stmt->free_result();
             $stmt->close();
-            return $this->master->user;
+            return $user;
 
         } else {
             $stmt->free_result();
@@ -104,10 +103,10 @@ class UserController extends Controller
         $row = $stmt->get_result()->fetch_assoc();
 
         if (!empty($row)) {
-            $this->master->user = new User($row);
+            $user = new User($row);
             $stmt->free_result();
             $stmt->close();
-            return $this->master->user;
+            return $user;
 
         } else {
             $stmt->free_result();
