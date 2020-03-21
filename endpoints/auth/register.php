@@ -15,7 +15,7 @@ spl_autoload_register(function ($class) {
     return false;
 });
 
-const REQUIRED_FIELDS = ['email', 'forename', 'surname', 'pass'];
+const REQUIRED_FIELDS = ['email', 'pass'];
 $master = new MasterController();
 
 $dataContent = file_get_contents("php://input");
@@ -46,7 +46,7 @@ if(count($passwordWeaknesses) > 0) {
     return;
 }
 
-if ($master->userController->registerUser($data->email, $data->forename, $data->surname, $data->pass, $master->userController->ROLE_DEFAULT)) {
+if ($master->userController->registerUser($data->email, "", "", $data->pass, $master->userController->ROLE_DEFAULT)) {
     http_response_code(200);
     $master->returnObjectAsJson($master->user);
     return;
