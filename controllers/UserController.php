@@ -12,7 +12,6 @@ class UserController extends Controller
     private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE LOWER(`email`)=? LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
-
     private function hashPassword($password)
     {
         $options = ['cost' => 11];
@@ -41,7 +40,7 @@ class UserController extends Controller
     {
         $con = $this->master->db->getConn();
 
-        $stmt = $con->prepare(QUERY_UPDATE_USER);
+        $stmt = $con->prepare($this->QUERY_UPDATE_USER);
         $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->pass, $user->role, $user->active, $user->id);
         return $stmt->execute();
     }
