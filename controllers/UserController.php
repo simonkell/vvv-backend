@@ -1,5 +1,9 @@
 <?php
 
+namespace controllers;
+
+use models\User;
+
 class UserController
 {
     public $ROLE_DEFAULT = 1;
@@ -8,11 +12,11 @@ class UserController
     private $QUERY_USER_BY_EMAIL = "SELECT `id`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`='%s' LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`='%d' LIMIT 1";
 
-    private $db;
+    private $master;
 
-    public function __construct($db)
+    public function __construct($master)
     {
-        $this->db = $db;
+        $this->master = $master;
     }
 
     private function hashPassword($password)
@@ -23,7 +27,7 @@ class UserController
 
     public function registerUser($email, $forename, $surname, $pass, $role, $active = 0)
     {
-        $con = $this->db->getConn();
+        $con = $this->master->db->getConn();
 
         $password_hashed = $this->hashPassword($pass);
 
@@ -35,14 +39,14 @@ class UserController
 
         $con->query(sprintf($this->QUERY_REGISTER, $escParamEmail, $escParamForname, $escParamSurname, $password_hashed, $escParamRole, $active));
 
-        $user = $this->getUserByEmail($email);
+        $this->master->user = $this->getUserByEmail($email);
 
-        return $this->loginUserWithPassCheck($user, $pass);
+        return $this->loginUserWithPassCheck($this->master->user, $pass);
     }
 
     public function changeUserPassword($db, User $user, $passNew)
     {
-        $con = $this->db->getConn();
+        $con = $this->master->db->getConn();
 
         $password_hashed = $this->hashPassword($passNew);
 
@@ -56,7 +60,7 @@ class UserController
 
     public function getUserByEmail($email)
     {
-        $con = $this->db->getConn();
+        $con = $this->master->db->getConn();
 
         $escParamEmail = $con->real_escape_string($email);
 
@@ -64,8 +68,8 @@ class UserController
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
 
-            $user = new User($result);
-            return $user;
+            $this->master->user = new User($result);
+            return $this->master->user;
         } else {
             return null;
         }
@@ -73,12 +77,12 @@ class UserController
 
     public function isExisting($email)
     {
-        return ($this->getUserByEmail($this->db, $email) != null);
+        return ($this->getUserByEmail($email) != null);
     }
 
     public function getUserById($id)
     {
-        $con = $this->db->getConn();
+        $con = $this->master->db->getConn();
 
         $escParamId = $con->real_escape_string($id);
 
@@ -87,8 +91,8 @@ class UserController
         if ($result && $result->num_rows > 0) {
             $result = $result->fetch_object();
 
-            $user = new User($result);
-            return $user;
+            $this->master->user = new User($result);
+            return $this->master->user;
         } else {
             return null;
         }
@@ -96,7 +100,7 @@ class UserController
 
     public function loginUserWithPassCheck(User $user, $password)
     {
-        if (password_verify($password, $user->passHash)) {
+        if (password_verify($password, $user->pass)) {
             $_SESSION[SESSION_NAME_USERID] = $user->id;
             return true;
         }

@@ -1,32 +1,24 @@
 <?php
+namespace controllers;
+
+use tools\HttpError;
+
 session_start();
 
 define("SESSION_NAME_USERID", "userId");
 
-// CONFIG
-include("config.php");
-
-// MODELS
-include("models/User.php");
-
 // CONTROLLERS
-include("controllers/DbController.php");
-include("controllers/UserController.php");
 // TODO: ResponseController? Invalid permission response, session expired response, no session response
-
-$db = new DbController();
-$userController = new UserController($db);
-
-$db->connect();
 
 class MasterController
 {
-    public $db, $userController;
+    public $db, $userController, $user;
 
-    public function __construct($db, $userController)
+    public function __construct()
     {
-        $this->db = $db;
-        $this->userController = $userController;
+        $this->db = new DbController();;
+        $this->userController = $userController = new UserController($this);
+        $this->db->connect();
     }
 
     public function isSessionValid($sessionName)
@@ -68,7 +60,7 @@ class MasterController
             http_response_code($httpError->getCode());
             $messages = [$httpError->getMessage()];
         }
-        echo json_encode((object) ["error" => true, "messages" => $messages]);
+        echo json_encode((object)["error" => true, "messages" => $messages]);
         header('Content-Type: application/json');
     }
 }

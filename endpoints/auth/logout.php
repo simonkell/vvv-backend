@@ -1,9 +1,23 @@
 <?php
-include("controllers/MasterController.php"); // init, settings, etc
-$master = new MasterController($db, $userController);
+
+use controllers\MasterController;
+
+include("..\..\config.php");
+
+spl_autoload_register(function ($class) {
+    $file = '..\\..\\' . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+    if (file_exists($file)) {
+        require $file;
+        return true;
+    }
+    return false;
+});
+
+
+$master = new MasterController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $userController->logout();
+    $master->userController->logout();
     http_response_code(200);
     return;
 }

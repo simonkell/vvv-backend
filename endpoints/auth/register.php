@@ -1,10 +1,22 @@
 <?php
-include('tools/Validator.php');
+
+use controllers\MasterController;
+use tools\Validator;
+
+include("..\..\config.php");
+
+spl_autoload_register(function ($class) {
+    $file = '..\\..\\' . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+    if (file_exists($file)) {
+        require $file;
+        return true;
+    }
+    return false;
+});
 
 const REQUIRED_FIELDS = ['email', 'forename', 'surname', 'pass'];
 
-include("controllers/MasterController.php"); // init, settings, etc
-$master = new MasterController($db, $userController);
+$master = new MasterController();
 
 $dataContent = file_get_contents("php://input");
 if (!$dataContent) {
@@ -21,9 +33,9 @@ if (!empty($validationErrors)) {
     return;
 }
 
-if ($userController->registerUser($data->email, $data->forename, $data->surname, $data->pass, $userController->ROLE_DEFAULT)) {
+if ($master->userController->registerUser($data->email, $data->forename, $data->surname, $data->pass, $master->userController->ROLE_DEFAULT)) {
     http_response_code(200);
-    echo json_encode($user);
+    echo json_encode($master->user);
     return;
 } else {
     http_response_code(401);

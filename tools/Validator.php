@@ -1,6 +1,5 @@
 <?php
-
-include('tools/HttpError.php');
+namespace tools;
 
 class Validator
 {
