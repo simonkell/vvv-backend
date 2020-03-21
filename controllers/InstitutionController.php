@@ -41,12 +41,13 @@ class InstitutionController extends Controller
 
         $stmt = $con->prepare($this->QUERY_BY_ID);
         $stmt->bind_param("i", $id);
-        if(!$stmt->execute())
-            return false;
+        $result = $con->query($stmt);
+        if ($result && $result->num_rows > 0) {
+            $result = $result->fetch_object();
+            return new InstitutionProfile($result);
+        }
 
-        $result = $stmt->get_result();
-        $result = $result->fetch_object();
-        return new InstitutionProfile($result);
+        return null;
     }
 
     public function getInstitutionProfileByUser(User $user) {
@@ -54,11 +55,12 @@ class InstitutionController extends Controller
 
         $stmt = $con->prepare($this->QUERY_BY_USERID);
         $stmt->bind_param("i", $user->id);
-        if(!$stmt->execute())
-            return false;
+        $result = $con->query($stmt);
+        if ($result && $result->num_rows > 0) {
+            $result = $result->fetch_object();
+            return new InstitutionProfile($result);
+        }
 
-        $result = $stmt->get_result();
-        $result = $result->fetch_object();
-        return new InstitutionProfile($result);
+        return null;
     }
 }
