@@ -123,6 +123,9 @@ class UserController extends Controller
             $user = new User($row);
             $stmt->free_result();
             $stmt->close();
+
+            if($this->master->volunteerController->isVolunteerProfile($user) || $this->master->institutionController->isInstitutionProfile($user))
+                $user->has_profile_created = true;
             return $user;
 
         } else {
@@ -156,6 +159,9 @@ class UserController extends Controller
             $user = new User($row);
             $stmt->free_result();
             $stmt->close();
+
+            if($this->master->volunteerController->isVolunteerProfile($user) || $this->master->institutionController->isInstitutionProfile($user))
+                $user->has_profile_created = true;
             return $user;
 
         } else {
