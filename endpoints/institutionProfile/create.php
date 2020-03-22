@@ -35,6 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $master->user = $master->userController->getUserById($_SESSION[SESSION_NAME_USERID]);
+    if($master->institutionController->isInstitutionProfile($master->user)) {
+        $master->errorResponse(new HttpError(400, "Dieser Benutzer ist bereits als Institution angemeldet."));
+        return;
+    }
+    if($master->volunteerController->isVolunteerProfile($master->user)) {
+        $master->errorResponse(new HttpError(400, "Dieser Benutzer ist bereits als Freiwilliger angemeldet."));
+        return;
+    }
 
     $institutionProfileId = $master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $master->user->id);
     if ($institutionProfileId) {
