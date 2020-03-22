@@ -5,32 +5,47 @@ namespace controllers;
 
 use models\User;
 use models\InstitutionProfile;
+use tools\HttpError;
 
 class InstitutionController extends Controller
 {
-    private $QUERY_CREATE = "INSERT INTO volunteer_profile (`name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at`) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP())";
-    private $QUERY_UPDATE = "UPDATE volunteer_profile SET `name`=?, `street`=?, `house_number`=?, `postal_code`=?, `city`=?, `description`=?, `user_id`=?, `updated_at`=CURRENT_TIMESTAMP() WHERE `id`=?";
-    private $QUERY_BY_USERID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM volunteer_profile WHERE `email`=? LIMIT 1";
-    private $QUERY_BY_ID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM volunteer_profile WHERE `id`=? LIMIT 1";
+    private $QUERY_CREATE = "INSERT INTO institution_profile (`name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private $QUERY_UPDATE = "UPDATE institution_profile SET `name`=?, `street`=?, `house_number`=?, `postal_code`=?, `city`=?, `description`=?, `user_id`=?, `updated_at`=CURRENT_TIMESTAMP() WHERE `id`=?";
+    private $QUERY_BY_USERID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `email`=? LIMIT 1";
+    private $QUERY_BY_ID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `id`=? LIMIT 1";
 
     public function createInstitutionProfile($name, $street, $house_number, $postal_code, $city, $description, $user_id) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_CREATE);
-        $stmt->bind_param("ssiissi", $name, $street, $house_number, $postal_code, $city, $description, $user_id);
-        if($stmt)
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
             return false;
+        }
+        $house_numberSql = (int) $house_number;
+        $postal_codeSql = (int) $postal_code;
+        $user_idSql = (int) $user_id;
+        $stmt->bind_param("ssiissi", $name, $street, $house_numberSql, $postal_codeSql, $city, $description, $user_idSql);
 
-        return $stmt->execute();
+        if($stmt->execute())
+            return $con->insert_id;
+
+        return false;
     }
 
-    public function updateInstitutionProfile($name, $street, $house_number, $postal_code, $city, $description, $user_id) {
+    public function updateInstitutionProfile($institutionProfileId, $name, $street, $house_number, $postal_code, $city, $description, $user_id) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_UPDATE);
-        $stmt->bind_param("ssiissi", $name, $street, $house_number, $postal_code, $city, $description, $user_id);
-        if(!$stmt)
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
             return false;
+        }
+        $house_numberSql = (int) $house_number;
+        $postal_codeSql = (int) $postal_code;
+        $user_idSql = (int) $user_id;
+        $institutionProfileIdSql = (int) $institutionProfileId;
+        $stmt->bind_param("ssiissii", $name, $street, $house_numberSql, $postal_codeSql, $city, $description, $user_idSql, $institutionProfileIdSql);
 
         return $stmt->execute();
     }
@@ -39,7 +54,12 @@ class InstitutionController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_BY_ID);
-        $stmt->bind_param("i", (int) $id);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return null;
+        }
+        $idSql = (int) $id;
+        $stmt->bindParam(1, $idSql);
 
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
@@ -58,27 +78,26 @@ class InstitutionController extends Controller
         return null;
     }
 
-    public function getInstitutionProfileByUser(User $user) {
+    public function getInstitutionProfilesByUser(User $user) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_BY_USERID);
-        $idSql = (int) $user->id;
-        $stmt->bind_param("i", $idSql);
-
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-
-        if (!empty($row)) {
-            $institutionProfile = new InstitutionProfile($row);
-            $stmt->free_result();
-            $stmt->close();
-            return $institutionProfile;
-        } else {
-            $stmt->free_result();
-            $stmt->close();
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
             return null;
         }
+        $stmt->bind_param("i", (int) $user->id);
 
-        return null;
+        $institutionProfileResults = array();
+        if($stmt->execute()) {
+            while($row = $stmt->get_result()->fetch_assoc()) {
+                $institutionProfileResults[] = new InstitutionProfile($row);
+            }
+
+            $stmt->free_result();
+            $stmt->close();
+        }
+
+        return $institutionProfileResults;
     }
 }

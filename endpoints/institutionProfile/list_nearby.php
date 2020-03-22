@@ -14,7 +14,7 @@ $master = new MasterController();
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Be sure the user is logged in!
     if(!$master->isSessionValid()) {
-        $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
+        $master->errorResponse(new HttpError(401, "Bitte melde Dich sich zuerst an."));
         return;
     }
 

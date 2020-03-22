@@ -3,6 +3,7 @@
 namespace controllers;
 
 use models\User;
+use tools\HttpError;
 
 class UserController extends Controller
 {
@@ -25,7 +26,13 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($pass);
 
         $stmt = $con->prepare($this->QUERY_REGISTER);
-        $stmt->bind_param("ssssii", $email, $forename, $surname, $password_hashed, $role, $active);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return false;
+        }
+        $roleSql = (int) $role;
+        $activeSql = ($active == 1 ? true : false);
+        $stmt->bind_param("ssssib", $email, $forename, $surname, $password_hashed, $roleSql, $activeSql);
         $stmt->execute();
         if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
@@ -45,7 +52,15 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_UPDATE_USER);
-        $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->pass, $user->role, $user->active, $user->id);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return false;
+        }
+        $roleIdSql = (int) $user->role;
+        $activeSql = ($user->active == 1 ? true : false);
+        $idSql = (int) $user->id;
+        $stmt->bind_param("ssssiib", $user->email, $user->forename, $user->surname, $user->pass, $roleIdSql, $idSql, $activeSql);
+
         return $stmt->execute();
     }
 
@@ -58,7 +73,14 @@ class UserController extends Controller
         $password_hashed = $this->hashPassword($passNew);
 
         $stmt = $con->prepare($this->QUERY_UPDATE_USER);
-        $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $password_hashed, $user->role, $user->active, $user->id);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return false;
+        }
+        $roleIdSql = (int) $user->role;
+        $activeSql = ($user->active == 1 ? true : false);
+        $idSql = (int) $user->id;
+        $stmt->bind_param("ssssiib", $user->email, $user->forename, $user->surname, $password_hashed, $roleIdSql, $idSql, $activeSql);
 
         return $stmt->execute();
     }
@@ -73,6 +95,10 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_EMAIL);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return null;
+        }
         $stmt->bind_param("s", $email);
 
         $stmt->execute();
@@ -101,6 +127,10 @@ class UserController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_USER_BY_ID);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return null;
+        }
         $idSql = (int) $id;
         $stmt->bind_param("i", $idSql);
 

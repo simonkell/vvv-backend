@@ -14,8 +14,8 @@ $master = new MasterController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Be sure the user is logged in!
-    if(!$master->isSessionValid()) {
-        $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
+    if (!$master->isSessionValid()) {
+        $master->errorResponse(new HttpError(401, "Bitte melde Dich sich zuerst an."));
         return;
     }
 
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Validate password strength
     $passwordWeaknesses = $validator->validatePassword($data->newPassword);
-    if(count($passwordWeaknesses) > 0) {
+    if (count($passwordWeaknesses) > 0) {
         $master->errorResponse($passwordWeaknesses);
         return;
     }
@@ -50,3 +50,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $master->errorResponse(new HttpError(401, 'Das Passwort war nicht korrekt.'));
         return;
     }
+}

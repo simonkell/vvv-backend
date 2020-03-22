@@ -5,15 +5,14 @@ use controllers\MasterController;
 use tools\Validator;
 use tools\HttpError;
 
-include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-const REQUIRED_FIELDS = ['institution_profile_id', 'name', 'street', 'house_number', 'postal_code', 'city', 'description', 'user_id'];
+const REQUIRED_FIELDS = ['user_id'];
 $master = new MasterController();
 /* SETUP */
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Be sure the user is logged in!
     if(!$master->isSessionValid()) {
         $master->errorResponse(new HttpError(401, "Bitte melde Dich sich zuerst an."));
         return;
@@ -39,18 +38,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // The user that should be linked does not exist
     $master->user = $master->userController->getUserById($data->user_id);
-    if(!$master->user) {
-        $master->errorResponse(new HttpError(400, 'Das Sucher-Profil des angeforderten Nutzers konnte nicht verändert werden, weil dieser nicht existiert.'));
+    if (!$master->user) {
+        $master->errorResponse(new HttpError(400, 'Die Sucher-Profile des angeforderten Nutzers konnten nicht gefunden werden, weil dieser nicht existieren.'));
         return;
     }
 
     // Try to update profile. Timestamp for update will be set inside update function
-    if ($master->institutionController->updateInstitutionProfile($data->institution_profile_id, $data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $data->user_id)) {
+    $institutionProfiles = $master->institutionController->getInstitutionProfilesByUser($master->user);
+    if (count($institutionProfiles) > 0) {
         http_response_code(200);
-        $master->returnObjectAsJson($master->user);
+        $master->returnObjectAsJson($institutionProfiles);
         return;
     } else {
-        http_response_code(401);
+        http_response_code(204);
         return;
     }
 }

@@ -14,7 +14,7 @@ $master = new MasterController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if(!$master->isSessionValid()) {
-        $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
+        $master->errorResponse(new HttpError(401, "Bitte melde dich sich zuerst an."));
         return;
     }
 
@@ -39,18 +39,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // The user that should be linked does not exist
     $master->user = $master->userController->getUserById($data->user_id);
     if (!$master->user) {
-        $master->errorResponse(new HttpError(400, 'Das Sucher-Profil des angeforderten Nutzers konnte nicht gefunden werden, weil dieser nicht existiert.'));
+        $master->errorResponse(new HttpError(400, 'Die Sucher-Profile des angeforderten Nutzers konnten nicht gefunden werden, weil dieser nicht existieren.'));
         return;
     }
 
     // Try to update profile. Timestamp for update will be set inside update function
-    $institutionProfile = $master->institutionController->getInstitutionProfileByUser($master->user);
-    if (isset($institutionProfile)) {
+    $institutionProfiles = $master->institutionController->getInstitutionProfilesByUser($master->user);
+    if (count($institutionProfiles) > 0) {
         http_response_code(200);
-        $master->returnObjectAsJson($institutionProfile);
+        $master->returnObjectAsJson($institutionProfiles);
         return;
     } else {
-        http_response_code(401);
+        http_response_code(204);
         return;
     }
 }

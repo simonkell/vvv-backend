@@ -8,7 +8,7 @@ abstract class Controller
 {
     protected $master;
 
-    public function __construct($master)
+    public function __construct(MasterController $master)
     {
         $this->master = $master;
     }

@@ -4,6 +4,7 @@ namespace controllers;
 
 use models\ConfirmationKey;
 use models\User;
+use tools\HttpError;
 
 class ConfirmationKeyController extends Controller
 {
@@ -17,8 +18,14 @@ class ConfirmationKeyController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_ADD);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return false;
+        }
+
         $idSql = $user->id;
         $stmt->bind_param("i", $idSql);
+
         $stmt->execute();
         if (!$stmt->error) {
             return getConfirmationKeyByUser($user);
@@ -32,6 +39,10 @@ class ConfirmationKeyController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_REMOVE);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return false;
+        }
         $stmt->bind_param("s", $key->key);
         return $stmt->execute();
     }
@@ -41,6 +52,10 @@ class ConfirmationKeyController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_SELECT_BY_KEY);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return null;
+        }
         $stmt->bind_param("s", $keyKey);
 
         $stmt->execute();
@@ -69,6 +84,10 @@ class ConfirmationKeyController extends Controller
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_SELECT_BY_USER_ID);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return null;
+        }
         $idSql = (int) $user->id;
         $stmt->bind_param("i", $idSql);
 

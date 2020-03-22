@@ -15,7 +15,7 @@ $master = new MasterController();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Be sure the user is logged in!
     if(!$master->isSessionValid()) {
-        $master->errorResponse(new HttpError(401, "Bitte melden Sie sich zuerst an."));
+        $master->errorResponse(new HttpError(401, "Bitte melde Dich sich zuerst an."));
         return;
     }
 
@@ -45,9 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Try to update profile. Timestamp for update will be set inside update function
-    if ($master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $data->user_id)) {
+    $institutionProfile = $master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $data->user_id);
+    if ($institutionProfile) {
         http_response_code(200);
-        $master->returnObjectAsJson($master->user);
+        $master->returnObjectAsJson($institutionProfile);
         return;
     } else {
         http_response_code(401);

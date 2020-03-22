@@ -3,8 +3,8 @@
 /* SETUP */
 use controllers\MasterController;
 
-include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "config.php");
-include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
+include("config.php");
+include("autoload.php");
 /* SETUP */
 
 if(isset($_GET["key"])) {
@@ -12,8 +12,8 @@ if(isset($_GET["key"])) {
 
     $master = new MasterController();
 
-    if($master->keyController->isExisting($keyKey)) {
-        $key = $master->keyController->getConfirmationKeyByKey($keyKey);
+    if($master->confirmationKeyController->isExisting($keyKey)) {
+        $key = $master->confirmationKeyController->getConfirmationKeyByKey($keyKey);
         $user = $master->userController->getUserById($key->user_id);
 
         if($user && (int) $user->active == 0) {
@@ -21,7 +21,7 @@ if(isset($_GET["key"])) {
 
             if($master->userController->changeUser($user)) {
                 // Hurra! Key wurde erfolgreich eingelöst. Benutzer aktiviert.
-                $master->keyController->removeKey($key);
+                $master->confirmationKeyController->removeKey($key);
             } else {
                 // :-(
             }
@@ -29,5 +29,20 @@ if(isset($_GET["key"])) {
     }
 }
 
+if(isset($_GET["adminCommand"]) && $_GET["adminCommand"] == "WeVsVolunteers_Mail" && isset($_GET["userId"])) {
+    $user = $master->userController->getUserById($_GET["userId"]);
+
+    if($user) {
+        $key = $this->master->confirmationKeyController->addNewKeyForUser($user);
+        $this->master->mailerController->sendMail($key, $user->email);
+        echo "Email an " . $user->email . " neu versendet.";
+        die;
+    }
+}
+
+// DEV
+echo "redirect";
+die;
+// DEV
 header("Location: http://volunteervsvirus.de/");
 die();
