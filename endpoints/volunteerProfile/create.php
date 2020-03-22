@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $volunteerProfileId = $master->volunteerController->createVolunteerProfile($data->ganztaegig, $data->date_from, $data->date_to, $data->time_from, $data->time_to, $data->radius, $data->drivinglicense, $data->medical_experience);
     if ($volunteerProfileId) {
-        $volunteerProfile = $master->institutionController->getInstitutionProfileById($volunteerProfileId);
+        $volunteerProfile = $master->volunteerController->getVolunteerProfileById($volunteerProfileId);
         if($volunteerProfile) {
             http_response_code(200);
             $master->returnObjectAsJson($volunteerProfile);
