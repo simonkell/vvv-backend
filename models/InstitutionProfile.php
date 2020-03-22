@@ -19,5 +19,4 @@ class InstitutionProfile
         $this->updated_at = $data["updated_at"];
     }
 }
-
 ?>

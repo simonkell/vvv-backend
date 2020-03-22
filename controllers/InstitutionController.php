@@ -109,34 +109,4 @@ class InstitutionController extends Controller
     public function isInstitutionProfile(User $user) {
         return count($this->getInstitutionProfilesByUser($user)) > 0;
     }
-
-    public function getInstitutionProfilesByPostCode($post_code) {
-        $con = $this->master->db->getConn();
-
-        $stmt = $con->prepare($this->QUERY_ALL_BY_PLZ);
-        if(!$stmt) {
-            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
-            return null;
-        }
-
-        // TODO: German postcodes only yet!!!
-        $post_codeWildcarded = substr("" . $post_code, 0, 3) . "**";
-        $stmt->bind_param("s", $post_codeWildcarded);
-
-        $institutionProfileResults = array();
-
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if($result) {
-
-            while($row = $result->fetch_assoc()) {
-                $institutionProfileResults[] = new InstitutionProfile($row);
-            }
-
-            $stmt->free_result();
-            $stmt->close();
-        }
-
-        return $institutionProfileResults;
-    }
 }
