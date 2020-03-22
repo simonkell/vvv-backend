@@ -8,7 +8,7 @@ use tools\HttpError;
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-const REQUIRED_FIELDS = ['institution_profile_id', 'name', 'street', 'house_number', 'postal_code', 'city', 'description', 'user_id'];
+const REQUIRED_FIELDS = ['institution_profile_id', 'name', 'street', 'house_number', 'postal_code', 'city', 'description'];
 $master = new MasterController();
 /* SETUP */
 
