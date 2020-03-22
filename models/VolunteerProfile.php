@@ -16,6 +16,7 @@ class VolunteerProfile
         $this->radius = $data["radius"];
         $this->drivinglicense = $data["drivinglicense"];
         $this->medical_experience = $data["medical_experience"];
+        $this->postal_code = $data["postal_code"];
         $this->user_id = $data["user_id"];
     }
 }
