@@ -79,6 +79,7 @@ class InstitutionController extends Controller
         return null;
     }
 
+    // TODO: YEP, 1 user has 1 profile - wrong approach, but working
     public function getInstitutionProfilesByUser(User $user) {
         $con = $this->master->db->getConn();
 
@@ -105,6 +106,10 @@ class InstitutionController extends Controller
         }
 
         return $institutionProfileResults;
+    }
+
+    public function isInstitutionProfile(User $user) {
+        return count($this->getInstitutionProfilesByUser($user)) > 0;
     }
 
     public function getInstitutionProfilesByPostCode($post_code) {

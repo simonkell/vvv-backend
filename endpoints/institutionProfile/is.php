@@ -2,6 +2,8 @@
 
 /* SETUP */
 use controllers\MasterController;
+use tools\HttpError;
+use tools\Validator;
 
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
@@ -38,5 +40,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $master->institutionController->isInstitutionProfile($user);
+    $master->returnObjectAsJson($master->institutionController->isInstitutionProfile($user));
 }
