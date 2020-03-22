@@ -17,12 +17,9 @@ if(isset($_GET["key"])) {
         $user = $master->userController->getUserById($key->user_id);
 
         if($user && (int) $user->active == 0) {
-            var_dump($user);
             $user->active = 1;
 
             if($master->userController->changeUser($user)) {
-                var_dump($user);
-
                 // Hurra! Key wurde erfolgreich eingelöst. Benutzer aktiviert.
                 $master->confirmationKeyController->removeKey($key);
             } else {
@@ -42,9 +39,5 @@ if(isset($_GET["adminCommand"]) && strcmp($_GET["adminCommand"], "WeVsVolunteers
     }
 }
 
-// DEV
-echo "redirect";
-die;
-// DEV
 header("Location: http://volunteervsvirus.de/");
 die();
