@@ -20,6 +20,8 @@ $essen = array(51.4582235, 7.0158171);
 //select * from geodata WHERE ST_Distance_Sphere(point(ORT_LAT, ORT_LON),point(?, ?)) * .000621371192 < ?
 //select * from geodata WHERE ST_Distance_Sphere(point(ORT_LAT, ORT_LON),point(51.4582235, 7.0158171)) * .000621371192 < 5
 
+//select *, ST_Distance_Sphere(point(ORT_LAT, ORT_LON),point(50.1213479, 8.4964795))*.0001 AS Distance from geodata WHERE ST_Distance_Sphere(point(ORT_LAT, ORT_LON),point(50.1213479, 8.9964795)) *.0001< 15 ORDER BY Distance
+
 return $query->whereRaw("
 ST_Distance_Sphere(
 point(ORT_LAN, ORT_LAT),
