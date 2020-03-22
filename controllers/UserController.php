@@ -40,7 +40,7 @@ class UserController extends Controller
 
             // Send confirmation
             $key = $this->master->confirmationKeyController->addNewKeyForUser($this->master->user);
-            if($this->master->mailerController->sendMail($key, $this->user->email))
+            if($this->master->mailerController->sendMail($key, $this->master->user->email))
                 return $this->loginUserWithPassCheck($this->master->user, $pass);
             else
                 return false;
