@@ -11,7 +11,7 @@ class InstitutionController extends Controller
 {
     private $QUERY_CREATE = "INSERT INTO institution_profile (`name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private $QUERY_UPDATE = "UPDATE institution_profile SET `name`=?, `street`=?, `house_number`=?, `postal_code`=?, `city`=?, `description`=?, `user_id`=?, `updated_at`=CURRENT_TIMESTAMP() WHERE `id`=?";
-    private $QUERY_BY_USERID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `email`=? LIMIT 1";
+    private $QUERY_BY_USERID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `user_id`=?";
     private $QUERY_BY_ID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `id`=? LIMIT 1";
 
     public function createInstitutionProfile($name, $street, $house_number, $postal_code, $city, $description, $user_id) {
@@ -86,16 +86,22 @@ class InstitutionController extends Controller
             $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
             return null;
         }
-        $stmt->bind_param("i", (int) $user->id);
+        $idSql = (int) $user->id;
+        $stmt->bind_param("i", $idSql);
 
         $institutionProfileResults = array();
         if($stmt->execute()) {
-            while($row = $stmt->get_result()->fetch_assoc()) {
-                $institutionProfileResults[] = new InstitutionProfile($row);
-            }
+            $result = $stmt->get_result();
+            if($stmt->get_result()) {
 
-            $stmt->free_result();
-            $stmt->close();
+                while($row = $result->fetch_assoc()) {
+                    $institutionProfileResults[] = new InstitutionProfile($row);
+                    echo json_encode(array_keys($row));
+                }
+
+                $stmt->free_result();
+                $stmt->close();
+            }
         }
 
         return $institutionProfileResults;

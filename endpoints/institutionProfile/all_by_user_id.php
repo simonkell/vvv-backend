@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Try to update profile. Timestamp for update will be set inside update function
     $institutionProfiles = $master->institutionController->getInstitutionProfilesByUser($master->user);
-    if (count($institutionProfiles) > 0) {
+    if ($institutionProfiles && count($institutionProfiles) > 0) {
         http_response_code(200);
         $master->returnObjectAsJson($institutionProfiles);
         return;
