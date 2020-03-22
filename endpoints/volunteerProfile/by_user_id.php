@@ -33,21 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    // Validation? $data->user_id == $sessionUser->id?
-    // TODO? @Backend-Team @general
-
     // The user that should be linked does not exist
     $master->user = $master->userController->getUserById($data->user_id);
     if (!$master->user) {
-        $master->errorResponse(new HttpError(400, 'Die Sucher-Profile des angeforderten Nutzers konnten nicht gefunden werden, weil dieser nicht existieren.'));
+        $master->errorResponse(new HttpError(400, 'Das Helfer-Profil des angeforderten Nutzers konnte nicht gefunden werden, weil dieser nicht existiert.'));
         return;
     }
 
-    // Try to update profile. Timestamp for update will be set inside update function
-    $institutionProfiles = $master->institutionController->getInstitutionProfilesByUser($master->user);
-    if ($institutionProfiles && count($institutionProfiles) > 0) {
+    $volunteerProfile = $master->volunteerController->getVolunteerProfileByUser($master->user);
+    if ($volunteerProfile) {
         http_response_code(200);
-        $master->returnObjectAsJson($institutionProfiles);
+        $master->returnObjectAsJson($volunteerProfile);
         return;
     } else {
         http_response_code(204);
