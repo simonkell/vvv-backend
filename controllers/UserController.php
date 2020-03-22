@@ -38,7 +38,7 @@ class UserController extends Controller
             $this->master->user = $this->getUserByEmail($email);
 
             // Send confirmation! TODO @Jocy!?
-            $key = $this->master->confirmationKeyController->addNewKeyForUser($this->master->user);
+            // $key = $this->master->confirmationKeyController->addNewKeyForUser($this->master->user);
             $this->master->mailerController->sendMail($key, $this->master->user->email);
 
             return $this->loginUserWithPassCheck($this->master->user, $pass);
