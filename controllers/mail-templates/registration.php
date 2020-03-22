@@ -1,5 +1,5 @@
 <?php
-$result = <<<HTML
+$mailTemplateRegistration = <<<HTML
 <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable" style="border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;background-color: #FFFFFF;">
                 <tbody><tr>
                     <td align="center" valign="top" id="bodyCell" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;margin: 0;padding: 0;width: 100%;border-top: 0;">
@@ -172,8 +172,8 @@ volunteervsvirus<br>
                             <td align="center" valign="middle" class="mcnButtonContent" style="font-family: Arial;font-size: 16px;padding: 18px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                 <a class="mcnButton " title="Registrierung bestätigen" href="
 HTML;
-$result .= $confirmUrl;
-$result .= <<<HTML
+$mailTemplateRegistration .= $confirmUrl;
+$mailTemplateRegistration .= <<<HTML
 " target="_blank" style="font-weight: bold;letter-spacing: normal;line-height: 100%;text-align: center;text-decoration: none;color: #FFFFFF;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;display: block;">Registrierung bestätigen</a>
                             </td>
                         </tr>
@@ -262,6 +262,3 @@ $result .= <<<HTML
                 </tr>
             </tbody></table>
 HTML;
-return $result;
-
-?>

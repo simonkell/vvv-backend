@@ -3,24 +3,24 @@
 namespace controllers;
 
 use models\ConfirmationKey;
-use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 
 class MailerController extends Controller
 {
     public function sendMail(ConfirmationKey $confirmKey, $mailTarget) {
-        require '../packages/phpmailer/Exception.php';
-        require '../packages/phpmailer/PHPMailer.php';
-        require '../packages/phpmailer/SMTP.php';
+        require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config.php';
+
+        require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages'. DIRECTORY_SEPARATOR . 'phpmailer'. DIRECTORY_SEPARATOR .'Exception.php';
+        require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages'. DIRECTORY_SEPARATOR . 'phpmailer'. DIRECTORY_SEPARATOR . 'PHPMailer.php';
+        require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages'. DIRECTORY_SEPARATOR . 'phpmailer'. DIRECTORY_SEPARATOR . 'SMTP.php';
 
         $mail = new PHPMailer(true);
 
         try {
-            require '../config.php';
-
             //Server settings
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+            $mail->SMTPDebug = SMTP::DEBUG_OFF;                      // Enable verbose debug output
             $mail->isSMTP();                                            // Send using SMTP
             $mail->Host       = 'bernstein.metanet.ch';                    // Set the SMTP server to send through
             $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
@@ -39,14 +39,16 @@ class MailerController extends Controller
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Volunteer Vs Virus Registrierung bestätigen';
 
-
-            $confirmUrl = 'api.volunteervsvirus.de/userConfirmation.php?key=' . $confirmKey->key;
-            $mail->Body = require('./mail-templates/registration.php');
+            $confirmUrl = 'api.volunteervsvirus.de/userConfirmation.php?key=' . $confirmKey->key; // Used in registration.php
+            // TEMPLATE
+            require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mail-templates'. DIRECTORY_SEPARATOR . 'registration.php';
+            $mail->Body = $mailTemplateRegistration;
 
             $mail->send();
-            echo 'Message has been sent';
+            return true;
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
+        return false;
     }
 }

@@ -1,25 +1,28 @@
 <?php
 
 /* SETUP */
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "config.php");
+include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
+
 use controllers\MasterController;
 
-include("config.php");
-include("autoload.php");
+$master = new MasterController();
 /* SETUP */
 
 if(isset($_GET["key"])) {
     $keyKey = $_GET["key"];
-
-    $master = new MasterController();
 
     if($master->confirmationKeyController->isExisting($keyKey)) {
         $key = $master->confirmationKeyController->getConfirmationKeyByKey($keyKey);
         $user = $master->userController->getUserById($key->user_id);
 
         if($user && (int) $user->active == 0) {
+            var_dump($user);
             $user->active = 1;
 
             if($master->userController->changeUser($user)) {
+                var_dump($user);
+
                 // Hurra! Key wurde erfolgreich eingelöst. Benutzer aktiviert.
                 $master->confirmationKeyController->removeKey($key);
             } else {
@@ -31,11 +34,9 @@ if(isset($_GET["key"])) {
 
 if(isset($_GET["adminCommand"]) && strcmp($_GET["adminCommand"], "WeVsVolunteers_Mail") == 0 && isset($_GET["user_id"])) {
     $user = $master->userController->getUserById($_GET["user_id"]);
-
-    var_dump($user);
     if($user) {
-        $key = $this->master->confirmationKeyController->addNewKeyForUser($user);
-        $this->master->mailerController->sendMail($key, $user->email);
+        $key = $master->confirmationKeyController->addNewKeyForUser($user);
+        $master->mailerController->sendMail($key, $user->email);
         echo "Email an " . $user->email . " neu versendet.";
         die;
     }

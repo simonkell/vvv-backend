@@ -31,8 +31,8 @@ class UserController extends Controller
             return false;
         }
         $roleSql = (int) $role;
-        $activeSql = ($active == 1 ? true : false);
-        $stmt->bind_param("ssssib", $email, $forename, $surname, $password_hashed, $roleSql, $activeSql);
+        $activeSql = (int) $active;
+        $stmt->bind_param("ssssii", $email, $forename, $surname, $password_hashed, $roleSql, $activeSql);
         $stmt->execute();
         if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
@@ -57,9 +57,9 @@ class UserController extends Controller
             return false;
         }
         $roleIdSql = (int) $user->role;
-        $activeSql = ($user->active == 1 ? true : false);
+        $activeSql = (int) $user->active;
         $idSql = (int) $user->id;
-        $stmt->bind_param("ssssiib", $user->email, $user->forename, $user->surname, $user->pass, $roleIdSql, $idSql, $activeSql);
+        $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->pass, $roleIdSql, $activeSql, $idSql);
 
         return $stmt->execute();
     }
