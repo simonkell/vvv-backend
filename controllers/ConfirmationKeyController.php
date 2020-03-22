@@ -8,7 +8,7 @@ use tools\HttpError;
 
 class ConfirmationKeyController extends Controller
 {
-    private $QUERY_ADD = "INSERT INTO confirmation (`key`, `user_id`) VALUES (hashKey(uuid()), ?)";
+    private $QUERY_ADD = "INSERT INTO confirmation (`key`, `user_id`) VALUES (".$this->hashKey(uuid()).", ?)";
     private $QUERY_SELECT_BY_KEY = "SELECT `id`, `key`, `user_id` FROM confirmation WHERE `key`=? LIMIT 1";
     private $QUERY_SELECT_BY_USER_ID = "SELECT `id`, `key`, `user_id` FROM confirmation WHERE `user_id`=? LIMIT 1";
     private $QUERY_REMOVE = "DELETE FROM confirmation WHERE `key`=?";
