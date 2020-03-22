@@ -41,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $user = getUserByEmail($data->email);
+    $user = $master->userController->getUserByEmail($data->email);
     if (password_verify($data->oldPassword, $user->pass)) {
-        changeUserPassword($user, $data->newPassword);
+        $master->userController->changeUserPassword($user, $data->newPassword);
         http_response_code(200);
         return;
     } else {
