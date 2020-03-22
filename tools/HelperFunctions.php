@@ -16,11 +16,11 @@ $leipzig = array(51.3406321, 12.3747329);
 $essen = array(51.4582235, 7.0158171);
 //echo calc_distance($leipzig, $essen)." Meter";
 
-//SELECT Substring(`Geo Point`, 1,Charindex(',', `Geo Point`)-1) as  LAT, Substring(`Geo Point`, Charindex(',',`Geo Point`)+1, LEN(`Geo Point`)) as LON,  v.user_id, v.radius, FROM volunteer_profile AS v INNER JOIN postalscodes AS p ON v.postal_code = p.postal_code WHERE users.id=;
+//SELECT Substring(`geopoint`, 1, POSITION(',' IN geopoint)-1) as  LAT, Substring(`Geo Point`, POSITION(',' IN geopoint)+1, LENGHT(`Geo Point`)) as LON,  v.user_id, v.radius, FROM volunteer_profile AS v INNER JOIN postalscodes AS p ON v.postal_code = p.postal_code WHERE users.id=;
 //Substring(FullName, 1,Charindex(',', FullName)-1) as Name, Substring(FullName, Charindex(',', FullName)+1, LEN(FullName)) as  Surname
 
 /*
-SELECT Substring(`Geo Point`, 1,Charindex(',', `Geo Point`)-1) as  LAT, Substring(`Geo Point`, Charindex(',',`Geo Point`)+1, LEN(`Geo Point`)) as LON,  * FROM institution_profile AS i INNER JOIN postalscodes AS p ON i.postal_code = p.postal_code WHERE ST_Distance_Sphere(point(LAT, LON),point(?, ?)) * .000621371192 < ?
+SELECT Substring(geopoint, 1,POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON,  * FROM institution_profile AS i INNER JOIN postalscodes AS p ON i.postal_code = p.postal_code WHERE ST_Distance_Sphere(point(LAT, LON),point(?, ?)) * .000621371192 < ?
 
 
 
