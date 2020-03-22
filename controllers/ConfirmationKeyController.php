@@ -13,12 +13,6 @@ class ConfirmationKeyController extends Controller
     private $QUERY_SELECT_BY_USER_ID = "SELECT `id`, `key`, `user_id` FROM confirmation WHERE `user_id`=? LIMIT 1";
     private $QUERY_REMOVE = "DELETE FROM confirmation WHERE `key`=?";
 
-    private function hashKey($uuid)
-    {
-        $options = ['cost' => 11];
-        return password_hash($uuid, PASSWORD_BCRYPT, $options);
-    }
-
     public function addNewKeyForUser(User $user)
     {
         $con = $this->master->db->getConn();
@@ -34,7 +28,7 @@ class ConfirmationKeyController extends Controller
 
         $stmt->execute();
         if (!$stmt->error) {
-            return getConfirmationKeyByUser($user);
+            return $this->getConfirmationKeyByUser($user);
         }
 
         return false;
@@ -101,7 +95,7 @@ class ConfirmationKeyController extends Controller
         $row = $stmt->get_result()->fetch_assoc();
 
         if (!empty($row)) {
-            $key = $row['key'];
+            $key = new ConfirmationKey($row);
             $stmt->free_result();
             $stmt->close();
             return $key;
