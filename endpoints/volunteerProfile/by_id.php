@@ -14,7 +14,7 @@ $master = new MasterController();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if(!$master->isSessionValid()) {
-        $master->errorResponse(new HttpError(401, "Bitte melde dich sich zuerst an."));
+        $master->errorResponse(new HttpError(401, "Bitte melde dich zuerst an."));
         return;
     }
 
