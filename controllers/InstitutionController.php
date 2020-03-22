@@ -24,9 +24,8 @@ class InstitutionController extends Controller
             return false;
         }
         $house_numberSql = (int) $house_number;
-        $postal_codeSql = (int) $postal_code;
         $user_idSql = (int) $user_id;
-        $stmt->bind_param("ssiissi", $name, $street, $house_numberSql, $postal_codeSql, $city, $description, $user_idSql);
+        $stmt->bind_param("ssiissi", $name, $street, $house_numberSql, $postal_code, $city, $description, $user_idSql);
 
         if($stmt->execute())
             return $con->insert_id;
@@ -43,10 +42,9 @@ class InstitutionController extends Controller
             return false;
         }
         $house_numberSql = (int) $house_number;
-        $postal_codeSql = (int) $postal_code;
         $user_idSql = (int) $user_id;
         $institutionProfileIdSql = (int) $institutionProfileId;
-        $stmt->bind_param("ssiissii", $name, $street, $house_numberSql, $postal_codeSql, $city, $description, $user_idSql, $institutionProfileIdSql);
+        $stmt->bind_param("ssiissii", $name, $street, $house_numberSql, $postal_code, $city, $description, $user_idSql, $institutionProfileIdSql);
 
         return $stmt->execute();
     }
