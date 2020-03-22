@@ -14,3 +14,5 @@ function calc_distance($coord1, $coord2){
 $leipzig = array(51.3406321, 12.3747329);
 $essen = array(51.4582235, 7.0158171);
 //echo calc_distance($leipzig, $essen)." Meter";
+
+//SELECT v.user_id, v.radius, g.ORT_NAME, g.ORT_LAT, g.ORT_LON FROM volunteer_profile AS v INNER JOIN geodata AS g ON v.PLZ = g.POSTLEITZAHL WHERE users.id=;
