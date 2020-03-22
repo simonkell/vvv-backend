@@ -39,15 +39,16 @@ class MailerController extends Controller
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Volunteer Vs Virus Registrierung bestätigen';
 
-            $confirmUrl = 'api.volunteervsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=' . $confirmKey->key; // Used in registration.php
+            $confirmUrl = 'http://api.volunteervsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=' . $confirmKey->key; // Used in registration.php
             // TEMPLATE
             require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mail-templates'. DIRECTORY_SEPARATOR . 'registration.php';
-            $mail->Body = $mailTemplateRegistration;
+
+            $mail->Body = "" . $mailTemplateRegistration;
 
             $mail->send();
             return true;
         } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }
         return false;
     }

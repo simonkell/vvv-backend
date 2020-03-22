@@ -10,6 +10,4 @@ class GeoLocation
         $this->lat = $data['LAT'];
         $this->lon = $data['LON'];
     }
-
-
 }
