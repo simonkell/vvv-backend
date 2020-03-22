@@ -3,7 +3,7 @@ namespace models;
 
 class VolunteerProfile
 {
-    public $id, $name, $ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience;
+    public $id, $name, $ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience, $user_id;
 
     public function __construct($data)
     {
@@ -16,6 +16,7 @@ class VolunteerProfile
         $this->radius = $data["radius"];
         $this->drivinglicense = $data["drivinglicense"];
         $this->medical_experience = $data["medical_experience"];
+        $this->user_id = $data["user_id"];
     }
 }
 

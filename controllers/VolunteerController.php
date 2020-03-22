@@ -9,12 +9,12 @@ use tools\HttpError;
 
 class VolunteerController extends Controller
 {
-    private $QUERY_CREATE = "INSERT INTO volunteer_profile (`ganztaegig`, `date_from`, `date_to`, `time_from`, `time_to`, `radius`, `drivinglicense`, `medical_experience`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    private $QUERY_UPDATE = "UPDATE volunteer_profile SET `ganztaegig`=?, `date_from`=?, `date_to`=?, `time_from`=?, `time_to`=?, `radius`=?, `drivinglicense`=?, `medical_experience`=? WHERE `id`=?";
+    private $QUERY_CREATE = "INSERT INTO volunteer_profile (`ganztaegig`, `date_from`, `date_to`, `time_from`, `time_to`, `radius`, `drivinglicense`, `medical_experience`, `user_id`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private $QUERY_UPDATE = "UPDATE volunteer_profile SET `ganztaegig`=?, `date_from`=?, `date_to`=?, `time_from`=?, `time_to`=?, `radius`=?, `drivinglicense`=?, `medical_experience`=?, `user_id`=? WHERE `id`=?";
     private $QUERY_BY_USERID = "SELECT * FROM volunteer_profile WHERE `user_id`=? LIMIT 1";
     private $QUERY_BY_ID = "SELECT * FROM volunteer_profile WHERE `id`=? LIMIT 1";
 
-    public function createVolunteerProfile($ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience) {
+    public function createVolunteerProfile($ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience, $user_id) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_CREATE);
@@ -26,7 +26,8 @@ class VolunteerController extends Controller
         $radiusSql = (int) $radius;
         $drivinglicenseSql = (int) $drivinglicense;
         $medical_experienceSql = (int) $medical_experience;
-        $stmt->bind_param("issssiii", $ganztaegigSql, $date_from, $date_to, $time_from, $time_to, $radiusSql, $drivinglicenseSql, $medical_experienceSql);
+        $user_idSql = (int) $user_id;
+        $stmt->bind_param("issssiiii", $ganztaegigSql, $date_from, $date_to, $time_from, $time_to, $radiusSql, $drivinglicenseSql, $medical_experienceSql, $user_idSql);
 
         if($stmt->execute())
             return $con->insert_id;
@@ -34,7 +35,7 @@ class VolunteerController extends Controller
         return false;
     }
 
-    public function updateVolunteerProfile($volunteerProfileId, $ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience) {
+    public function updateVolunteerProfile($volunteerProfileId, $ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience, $user_id) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_UPDATE);
@@ -46,8 +47,9 @@ class VolunteerController extends Controller
         $radiusSql = (int) $radius;
         $drivinglicenseSql = (int) $drivinglicense;
         $medical_experienceSql = (int) $medical_experience;
+        $user_idSql = (int) $user_id;
         $volunteerProfileIdSql = (int) $volunteerProfileId;
-        $stmt->bind_param("issssiii", $ganztaegigSql, $date_from, $date_to, $time_from, $time_to, $radiusSql, $drivinglicenseSql, $medical_experienceSql, $volunteerProfileIdSql);
+        $stmt->bind_param("issssiiii", $ganztaegigSql, $date_from, $date_to, $time_from, $time_to, $radiusSql, $drivinglicenseSql, $medical_experienceSql, $user_idSql, $volunteerProfileIdSql);
 
         return $stmt->execute();
     }
