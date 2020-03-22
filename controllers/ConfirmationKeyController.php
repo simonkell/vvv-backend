@@ -40,7 +40,7 @@ class ConfirmationKeyController extends Controller
         return false;
     }
 
-    public function removeKey(ConfirmationKey $key)
+    public function removeKey( $key)
     {
         $con = $this->master->db->getConn();
 
@@ -101,7 +101,7 @@ class ConfirmationKeyController extends Controller
         $row = $stmt->get_result()->fetch_assoc();
 
         if (!empty($row)) {
-            $key = new ConfirmationKey($row);
+            $key = $row['key'];
             $stmt->free_result();
             $stmt->close();
             return $key;
