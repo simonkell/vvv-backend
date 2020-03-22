@@ -17,6 +17,7 @@ class MasterController
 
     public $institutionController;
     public $volunteerController;
+    public $profileRadiusController;
     public $confirmationKeyController;
     public $mailerController;
 
@@ -26,6 +27,7 @@ class MasterController
         $this->userController = new UserController($this);
         $this->institutionController = new InstitutionController($this);
         $this->volunteerController = new VolunteerController($this);
+        $this->profileRadiusController = new ProfileRadiusController($this);
         $this->confirmationKeyController = new ConfirmationKeyController($this);
         $this->mailerController = new MailerController($this);
         $this->db->connect();
