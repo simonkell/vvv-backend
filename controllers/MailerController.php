@@ -39,7 +39,7 @@ class MailerController extends Controller
             $mail->isHTML(true);                                  // Set email format to HTML
             $mail->Subject = 'Volunteer Vs Virus Registrierung bestätigen';
 
-            $confirmUrl = 'api.volunteervsvirus.de/userConfirmation.php?key=' . $confirmKey->key; // Used in registration.php
+            $confirmUrl = 'api.volunteervsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=' . $confirmKey->key; // Used in registration.php
             // TEMPLATE
             require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mail-templates'. DIRECTORY_SEPARATOR . 'registration.php';
             $mail->Body = $mailTemplateRegistration;
