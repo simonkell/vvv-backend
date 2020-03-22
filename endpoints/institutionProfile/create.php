@@ -36,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $master->user = $master->userController->getUserById($_SESSION[SESSION_NAME_USERID]);
 
-    // Try to update profile. Timestamp for update will be set inside update function
     $institutionProfileId = $master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $master->user->id);
     if ($institutionProfileId) {
         $institutionProfile = $master->institutionController->getInstitutionProfileById($institutionProfileId);
