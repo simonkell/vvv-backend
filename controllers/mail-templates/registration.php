@@ -259,4 +259,5 @@ volunteervsvirus<br>
                     </td>
                 </tr>
             </tbody></table>";
+        return $mailTemplateRegistration;
     }
