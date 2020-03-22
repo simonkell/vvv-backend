@@ -48,8 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // }
 
     // Change everything of user except password! see updatePassword.php
-    $user = getUserByEmail($data->email);
+    $user = $master->userController->getUserByEmail($data->email);
     if($_SESSION[SESSION_NAME_USERID] == $user->id) {
+        // Deactivate user on email change -> new email will be sent from userController
+        if($data->email !== $user->email)
+            $user->active = 0;
+
         $user->email = $data->email;
         $user->forename = $data->forename;
         $user->surname = $data->surname;
@@ -62,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         }
     } else {
-        $master->errorResponse(new HttpError(401, 'Das Passwort war nicht korrekt.'));
+        http_response_code(401);
         return;
     }
 }

@@ -8,9 +8,10 @@ use tools\HttpError;
 class UserController extends Controller
 {
     public $ROLE_DEFAULT = 1;
-    private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (?, ?, ?, ?, ?, ?)";
-    private $QUERY_UPDATE_USER = "UPDATE users SET `email`=?, `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `ID`=?";
-    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE LOWER(`email`)=? LIMIT 1";
+    private $QUERY_REGISTER = "INSERT INTO users (`email`, `forename`, `surname`, `pass`, `role`, `active`) VALUES (LOWER(?), ?, ?, ?, ?, ?)";
+    private $QUERY_UPDATE_USER = "UPDATE users SET `email`=LOWER(?), `forename`=?, `surname`=?, `pass`=?, `role`=?, `active`=? WHERE `id`=?";
+    private $QUERY_UPDATE_USER_PASSWORD = "UPDATE users SET `pass`=? WHERE `id`=?";
+    private $QUERY_USER_BY_EMAIL = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `email`=? LIMIT 1";
     private $QUERY_USER_BY_ID = "SELECT `id`, `email`, `forename`, `surname`, `pass`, `role`, `active` FROM users WHERE `id`=? LIMIT 1";
 
     private function hashPassword($password)
@@ -37,11 +38,12 @@ class UserController extends Controller
         if (!$stmt->error) {
             $this->master->user = $this->getUserByEmail($email);
 
-            // Send confirmation! TODO @Jocy!?
-             $key = $this->master->confirmationKeyController->addNewKeyForUser($this->master->user);
-            $this->master->mailerController->sendMail($key, $this->master->user->email);
-
-            return $this->loginUserWithPassCheck($this->master->user, $pass);
+            // Send confirmation
+            $key = $this->master->confirmationKeyController->addNewKeyForUser($this->master->user);
+            if($this->master->mailerController->sendMail($key, $this->user->email))
+                return $this->loginUserWithPassCheck($this->master->user, $pass);
+            else
+                return false;
         }
 
         return false;
@@ -61,31 +63,44 @@ class UserController extends Controller
         $idSql = (int) $user->id;
         $stmt->bind_param("ssssiii", $user->email, $user->forename, $user->surname, $user->pass, $roleIdSql, $activeSql, $idSql);
 
-        return $stmt->execute();
+        $stmt->execute();
+        if(!$stmt->error) {
+            if($activeSql == 0) {
+                // Send confirmation
+                $key = $this->master->confirmationKeyController->addNewKeyForUser($user);
+                if($this->master->mailerController->sendMail($key, $user->email))
+                    return true;
+                else
+                    return false;
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public function changeUserPassword(User $user, $passNew)
     {
-        //$user->pass= $passNew;
-        //this->changeUser( $user);
         $con = $this->master->db->getConn();
 
         $password_hashed = $this->hashPassword($passNew);
 
-        $stmt = $con->prepare($this->QUERY_UPDATE_USER);
+        $stmt = $con->prepare($this->QUERY_UPDATE_USER_PASSWORD);
         if(!$stmt) {
             $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
             return false;
         }
-        $roleIdSql = (int) $user->role;
-        $activeSql = ($user->active == 1 ? true : false);
         $idSql = (int) $user->id;
-        $stmt->bind_param("ssssiib", $user->email, $user->forename, $user->surname, $password_hashed, $roleIdSql, $idSql, $activeSql);
+        $stmt->bind_param("si", $password_hashed, $idSql);
 
-        return $stmt->execute();
+        $stmt->execute();
+        if(!$stmt->error)
+            return true;
+
+        return false;
     }
 
-    public function sendUserPasswordEmail(User $user)
+    public function sendUserEmail(User $user)
     {
         // Ciao
     }
