@@ -10,8 +10,8 @@ use tools\HttpError;
 
 class ProfileRadiusController extends Controller
 {
-    private $QUERY_VOLUNTEER_GEOLOCATIONS_BY_USERID = "SELECT Substring(`geopoint`, 1, POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON,  v.user_id, v.radius, FROM volunteer_profile AS v INNER JOIN postalscodes AS p ON v.postal_code = p.postal_code WHERE users.id=?";
-    private $QUERY_IN_RADIUS_BY_GEOLOCATIONS = "SELECT Substring(geopoint, 1,POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON,  * FROM institution_profile AS i INNER JOIN postalscodes AS p ON i.postal_code = p.postal_code WHERE ST_Distance_Sphere(point(LAT, LON),point(?, ?)) * .0001 < ?";
+    private $QUERY_VOLUNTEER_GEOLOCATIONS_BY_USERID = "SELECT Substring(`geopoint`, 1, POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON,  v.user_id, v.radius, FROM volunteer_profile AS v INNER JOIN postalcodes AS p ON v.postal_code = p.postal_code WHERE users.id=?";
+    private $QUERY_IN_RADIUS_BY_GEOLOCATIONS = "SELECT Substring(geopoint, 1,POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON,  * FROM institution_profile AS i INNER JOIN postalcodes AS p ON i.postal_code = p.postal_code WHERE ST_Distance_Sphere(point(LAT, LON),point(?, ?)) * .0001 < ?";
 
     public function getInstitutionProfilesByRadiusAndGeo($radiusInKilometer, $geoLat, $geoLon) {
         $con = $this->master->db->getConn();
