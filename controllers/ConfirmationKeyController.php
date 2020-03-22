@@ -68,7 +68,7 @@ class ConfirmationKeyController extends Controller
         $row = $stmt->get_result()->fetch_assoc();
 
         if (!empty($row)) {
-            $key = $row['key'];
+            $key = new ConfirmationKey($row);
             $stmt->free_result();
             $stmt->close();
             return $key;
