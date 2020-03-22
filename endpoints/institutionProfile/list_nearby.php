@@ -23,20 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // Secure that there is a volunteer profile linked to the user
     if($master->volunteerController->isVolunteerProfile($user)) {
         $volunteerProfile = $master->volunteerController->getVolunteerProfileByUser($user);
-        $geoCode = $master->profileRadiusController->getGeoCodeOfUserByUser($user);
+        $geoCode = $master->profileRadiusController->getGeoCodeForVolunteerUser($user);
 
         // Could not find a geocode for user!? :o
         if(!$geoCode) {
-            http_response_code(204);
+            http_response_code(400);
             return;
         }
 
-        $master->profileRadiusController->getInstitutionProfilesByRadiusAndGeo($volunteerProfile->radius, $geoCode);
-
-
-        http_response_code(200);
-        //$master->returnObjectAsJson($master->user);
-        return;
+        $nearbyInstitutions = $master->profileRadiusController->getInstitutionProfilesByRadiusAndGeo($volunteerProfile->radius, $geoCode);
+        if(count($nearbyInstitutions) > 0) {
+            http_response_code(200);
+            $master->returnObjectAsJson($nearbyInstitutions);
+        } else {
+            http_response_code(204);
+        }
     } else {
         // Institutions should not get a list of institutions nearby(!)
         http_response_code(400);

@@ -3,45 +3,61 @@
 
 namespace controllers;
 
+use models\InstitutionProfile;
 use models\User;
-use models\VolunteerProfile;
 use models\GeoLocation;
 use tools\HttpError;
 
 class ProfileRadiusController extends Controller
 {
-    private $QUERY_VOLUNTEER_GEOLOCATIONS_BY_USERID = "SELECT Substring(`geopoint`, 1, POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON, v.user_id, FROM volunteer_profile AS v INNER JOIN postalcodes AS p ON v.postal_code = p.postal_code WHERE user_id=?";
-    private $QUERY_IN_RADIUS_BY_GEOLOCATIONS = "SELECT Substring(geopoint, 1,POSITION(',' IN geopoint)-1) as  LAT, Substring(geopoint, POSITION(',' IN geopoint)+1, LENGHT(geopoint)) as LON, * FROM institution_profile AS i INNER JOIN postalcodes AS p ON i.postal_code = p.postal_code WHERE ST_Distance_Sphere(point(LAT, LON),point(?, ?)) * .0001 < ?";
+    /*
+     * $QUERY_VOLUNTEER_GEOLOCATIONS_BY_USERID
+     SELECT
+        SUBSTRING(`geopoint`, 1, POSITION(',' IN `geopoint`)-1) as  LAT,
+        SUBSTRING(`geopoint`, POSITION(',' IN `geopoint`)+1, LENGTH(`geopoint`)) as LON, v.user_id
+        FROM volunteer_profile AS v INNER JOIN postalcodes AS p ON v.postal_code = p.postal_code
+    WHERE user_id=?;
+     */
 
-    public function getInstitutionProfilesByRadiusAndGeo($radiusInKilometer, $geoLat, $geoLon) {
+    /*
+    SELECT *,
+    SUBSTRING(`geopoint`, 1, POSITION(',' IN `geopoint`)-1) as LAT,
+    SUBSTRING(`geopoint`, POSITION(',' IN `geopoint`)+1, LENGTH(`geopoint`)) as LON
+    FROM institution_profile AS i INNER JOIN postalcodes AS p ON i.postal_code = p.postal_code
+    HAVING ST_Distance_Sphere(point(LAT, LON), point(51.444108347, 7.31537780144)) * .0001 < 15;
+     */
+
+    private $QUERY_VOLUNTEER_GEOLOCATIONS_BY_USERID = "SELECT SUBSTRING(`geopoint`, 1, POSITION(',' IN `geopoint`)-1) as  LAT, SUBSTRING(`geopoint`, POSITION(',' IN `geopoint`)+1, LENGTH(`geopoint`)) as LON, v.user_id FROM volunteer_profile AS v INNER JOIN postalcodes AS p ON v.postal_code = p.postal_code WHERE user_id=?;";
+    private $QUERY_IN_RADIUS_BY_GEOLOCATIONS = "SELECT *, SUBSTRING(`geopoint`, 1, POSITION(',' IN `geopoint`)-1) as LAT, SUBSTRING(`geopoint`, POSITION(',' IN `geopoint`)+1, LENGTH(`geopoint`)) as LON FROM institution_profile AS i INNER JOIN postalcodes AS p ON i.postal_code = p.postal_code HAVING ST_Distance_Sphere(point(LAT, LON), point(?, ?)) * .0001 < ?;";
+
+    public function getInstitutionProfilesByRadiusAndGeo($radiusInKilometer, GeoLocation $geo) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_IN_RADIUS_BY_GEOLOCATIONS);
         if(!$stmt) {
-            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .") " . $con->error));
             return null;
         }
         $radiusInKilometerSql = (int) $radiusInKilometer;
-        $stmt->bind_param("iss", $radiusInKilometerSql, $geoLat, $geoLon);
+        $stmt->bind_param("ddi", $geo->lat, $geo->lon, $radiusInKilometerSql);
 
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+        $result = $stmt->get_result();
 
-        if (!empty($row)) {
-            $volunteerProfile = new VolunteerProfile($row);
+        $nearbyInstitutions = array();
+        if($result) {
+            while ($row = $result->fetch_assoc()) {
+                $nearbyInstitutions[] = new InstitutionProfile($row);
+            }
             $stmt->free_result();
             $stmt->close();
-            return $volunteerProfile;
-        } else {
-            $stmt->free_result();
-            $stmt->close();
-            return null;
+            return $nearbyInstitutions;
         }
 
-        return null;
+        return $nearbyInstitutions;
     }
 
-    public function getGeoCodeOfUserByUser(User $user) {
+    public function getGeoCodeForVolunteerUser(User $user) {
         $con = $this->master->db->getConn();
 
         $stmt = $con->prepare($this->QUERY_VOLUNTEER_GEOLOCATIONS_BY_USERID);
