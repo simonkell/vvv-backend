@@ -8,7 +8,7 @@ use tools\HttpError;
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-const REQUIRED_FIELDS = ['email', 'forename', 'surname'];
+const REQUIRED_FIELDS = ['id', 'email', 'forename', 'surname'];
 $master = new MasterController();
 /* SETUP */
 
@@ -40,15 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    // Validate password strength
-    // $passwordWeaknesses = $validator->validatePassword($data->pass_new);
-    // if(count($passwordWeaknesses) > 0) {
-    //     $master->errorResponse($passwordWeaknesses);
-    //     return;
-    // }
-
     // Change everything of user except password! see updatePassword.php
-    $user = $master->userController->getUserByEmail($data->email);
+    $user = $master->userController->getUserById($data->id);
     if($_SESSION[SESSION_NAME_USERID] == $user->id) {
         // Deactivate user on email change -> new email will be sent from userController
         if($data->email !== $user->email)
