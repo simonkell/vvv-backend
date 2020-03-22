@@ -40,10 +40,10 @@ class MailerController extends Controller
             $mail->Subject = 'Volunteer Vs Virus Registrierung bestätigen';
 
             $confirmUrl = 'http://api.volunteervsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=' . $confirmKey->key; // Used in registration.php
-            // TEMPLATE
+            // TEMPLATE GEN
             require dirname(__FILE__) . DIRECTORY_SEPARATOR . 'mail-templates'. DIRECTORY_SEPARATOR . 'registration.php';
 
-            $mail->Body = "" . $mailTemplateRegistration;
+            $mail->Body = getMailBody($confirmUrl);
 
             $mail->send();
             return true;
