@@ -38,9 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Try to update profile. Timestamp for update will be set inside update function
     if ($master->institutionController->updateInstitutionProfile($data->institution_profile_id, $data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $master->user->id)) {
-        http_response_code(200);
-        $master->returnObjectAsJson($master->user);
-        return;
+        $institutionProfile = $master->institutionController->getInstitutionProfileById($data->institution_profile_id);
+        if($institutionProfile) {
+            http_response_code(200);
+            $master->returnObjectAsJson($institutionProfile);
+            return;
+        } else {
+            $master->errorResponse(new HttpError(500, "Something went wrong :-( Created profile, but could not find it."));
+        }
     } else {
         http_response_code(401);
         return;

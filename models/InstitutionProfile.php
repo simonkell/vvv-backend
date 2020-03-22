@@ -18,8 +18,6 @@ class InstitutionProfile
         $this->created_at = $data["created_at"];
         $this->updated_at = $data["updated_at"];
     }
-
-
 }
 
 ?>

@@ -1,3 +1,4 @@
+<?php
 function calc_distance($coord1, $coord2){
     $r = 6371e3;
     $lat1 = deg2rad($coord1[0]);

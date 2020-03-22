@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // The user that should be linked does not exist
     $institutionProfile = $master->institutionController->getInstitutionProfileById($data->id);
     if ($institutionProfile) {
+        http_response_code(200);
         $master->returnObjectAsJson($institutionProfile);
         return;
     } else {

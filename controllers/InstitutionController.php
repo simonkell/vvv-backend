@@ -11,8 +11,9 @@ class InstitutionController extends Controller
 {
     private $QUERY_CREATE = "INSERT INTO institution_profile (`name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private $QUERY_UPDATE = "UPDATE institution_profile SET `name`=?, `street`=?, `house_number`=?, `postal_code`=?, `city`=?, `description`=?, `user_id`=?, `updated_at`=CURRENT_TIMESTAMP() WHERE `id`=?";
-    private $QUERY_BY_USERID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `user_id`=?";
-    private $QUERY_BY_ID = "SELECT `id`, `name`, `street`, `house_number`, `postal_code`, `city`, `description`, `user_id`, `updated_at` FROM institution_profile WHERE `id`=? LIMIT 1";
+    private $QUERY_BY_USERID = "SELECT * FROM institution_profile WHERE `user_id`=?";
+    private $QUERY_BY_ID = "SELECT * FROM institution_profile WHERE `id`=? LIMIT 1";
+    private $QUERY_ALL_BY_PLZ = "";
 
     public function createInstitutionProfile($name, $street, $house_number, $postal_code, $city, $description, $user_id) {
         $con = $this->master->db->getConn();
@@ -90,21 +91,47 @@ class InstitutionController extends Controller
         $stmt->bind_param("i", $idSql);
 
         $institutionProfileResults = array();
-        var_dump($stmt);
-        echo "\n" . $con->error;
-        die;
-        if($stmt->execute()) {
-            $result = $stmt->get_result();
-            if($stmt->get_result()) {
 
-                while($row = $result->fetch_assoc()) {
-                    $institutionProfileResults[] = new InstitutionProfile($row);
-                    echo json_encode(array_keys($row));
-                }
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result) {
 
-                $stmt->free_result();
-                $stmt->close();
+            while($row = $result->fetch_assoc()) {
+                $institutionProfileResults[] = new InstitutionProfile($row);
             }
+
+            $stmt->free_result();
+            $stmt->close();
+        }
+
+        return $institutionProfileResults;
+    }
+
+    public function getInstitutionProfilesByPostCode($post_code) {
+        $con = $this->master->db->getConn();
+
+        $stmt = $con->prepare($this->QUERY_ALL_BY_PLZ);
+        if(!$stmt) {
+            $this->master->errorResponse(new HttpError(500, "There was something wrong with that statement: (" . $con->errno .")" . $con->error));
+            return null;
+        }
+
+        // TODO: German postcodes only yet!!!
+        $post_codeWildcarded = substr("" . $post_code, 0, 3) . "**";
+        $stmt->bind_param("s", $post_codeWildcarded);
+
+        $institutionProfileResults = array();
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result) {
+
+            while($row = $result->fetch_assoc()) {
+                $institutionProfileResults[] = new InstitutionProfile($row);
+            }
+
+            $stmt->free_result();
+            $stmt->close();
         }
 
         return $institutionProfileResults;
