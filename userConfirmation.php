@@ -29,9 +29,10 @@ if(isset($_GET["key"])) {
     }
 }
 
-if(isset($_GET["adminCommand"]) && $_GET["adminCommand"] == "WeVsVolunteers_Mail" && isset($_GET["userId"])) {
-    $user = $master->userController->getUserById($_GET["userId"]);
+if(isset($_GET["adminCommand"]) && strcmp($_GET["adminCommand"], "WeVsVolunteers_Mail") == 0 && isset($_GET["user_id"])) {
+    $user = $master->userController->getUserById($_GET["user_id"]);
 
+    var_dump($user);
     if($user) {
         $key = $this->master->confirmationKeyController->addNewKeyForUser($user);
         $this->master->mailerController->sendMail($key, $user->email);
