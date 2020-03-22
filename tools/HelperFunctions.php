@@ -17,6 +17,9 @@ $essen = array(51.4582235, 7.0158171);
 //echo calc_distance($leipzig, $essen)." Meter";
 
 //SELECT v.user_id, v.radius, g.ORT_NAME, g.ORT_LAT, g.ORT_LON FROM volunteer_profile AS v INNER JOIN geodata AS g ON v.PLZ = g.POSTLEITZAHL WHERE users.id=;
+//select * from geodata WHERE ST_Distance_Sphere(point(ORT_LAT, ORT_LON),point(?, ?)) * .000621371192 < ?
+//select * from geodata WHERE ST_Distance_Sphere(point(ORT_LAT, ORT_LON),point(51.4582235, 7.0158171)) * .000621371192 < 5
+
 return $query->whereRaw("
 ST_Distance_Sphere(
 point(ORT_LAN, ORT_LAT),
