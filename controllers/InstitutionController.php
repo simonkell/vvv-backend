@@ -59,7 +59,7 @@ class InstitutionController extends Controller
             return null;
         }
         $idSql = (int) $id;
-        $stmt->bindParam(1, $idSql);
+        $stmt->bind_param("i", $idSql);
 
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
@@ -90,6 +90,9 @@ class InstitutionController extends Controller
         $stmt->bind_param("i", $idSql);
 
         $institutionProfileResults = array();
+        var_dump($stmt);
+        echo "\n" . $con->error;
+        die;
         if($stmt->execute()) {
             $result = $stmt->get_result();
             if($stmt->get_result()) {

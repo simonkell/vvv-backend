@@ -34,22 +34,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    // Validation? $data->user_id == $sessionUser->id?
-    // TODO? @Backend-Team @general
-
-    // The user that should be linked does not exist
-    $master->user = $master->userController->getUserById($data->user_id);
-    if(!$master->user) {
-        $master->errorResponse(new HttpError(400, 'Das Sucher-Profil des angeforderten Nutzers konnte nicht angelegt werden, weil dieser nicht existiert.'));
-        return;
-    }
+    $master->user = $master->userController->getUserById($_SESSION[SESSION_NAME_USERID]);
 
     // Try to update profile. Timestamp for update will be set inside update function
-    $institutionProfile = $master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $data->user_id);
-    if ($institutionProfile) {
-        http_response_code(200);
-        $master->returnObjectAsJson($institutionProfile);
-        return;
+    $institutionProfileId = $master->institutionController->createInstitutionProfile($data->name, $data->street, $data->house_number, $data->postal_code, $data->city, $data->description, $master->user->id);
+    if ($institutionProfileId) {
+        $institutionProfile = $master->institutionController->getInstitutionProfileById($institutionProfileId);
+        if($institutionProfile) {
+            http_response_code(200);
+            $master->returnObjectAsJson($institutionProfile);
+            return;
+        } else {
+            $master->errorResponse(new HttpError(500, "Something went wrong :-( Created profile, but could not find it."));
+        }
     } else {
         http_response_code(401);
         return;
