@@ -8,7 +8,7 @@ use tools\HttpError;
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-const REQUIRED_FIELDS = ['volunteer_profile_id', 'ganztaegig', 'date_from', 'date_to', 'time_from', 'time_to', 'radius', 'drivinglicense', 'medical_experience'];
+const REQUIRED_FIELDS = ['volunteer_profile_id', 'time_from', 'time_to', 'radius', 'drivinglicense', 'medical_experience', 'postal_code', 'bio', 'phone'];
 $master = new MasterController();
 /* SETUP */
 
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $master->user = $master->userController->getUserById($_SESSION[SESSION_NAME_USERID]);
 
     // Try to update profile. Timestamp for update will be set inside update function
-    if ($master->volunteerController->updateVolunteerProfile($data->volunteer_profile_id, $data->ganztaegig, $data->date_from, $data->date_to, $data->time_from, $data->time_to, $data->radius, $data->drivinglicense, $data->medical_experience, $master->user->id)) {
+    if ($master->volunteerController->updateVolunteerProfile($data->volunteer_profile_id, $data->time_from, $data->time_to, $data->radius, $data->drivinglicense, $data->medical_experience, $data->postal_code, $master->user->id, $data->bio, $data->phone)) {
         $volunteerController = $master->volunteerController->getInstitutionProfileById($data->volunteer_profile_id);
         if($volunteerController) {
             http_response_code(200);

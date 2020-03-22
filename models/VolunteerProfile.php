@@ -3,14 +3,11 @@ namespace models;
 
 class VolunteerProfile
 {
-    public $id, $name, $ganztaegig, $date_from, $date_to, $time_from, $time_to, $radius, $drivinglicense, $medical_experience, $user_id;
+    public $id, $name, $time_from, $time_to, $radius, $drivinglicense, $medical_experience, $user_id, $bio, $phone;
 
     public function __construct($data)
     {
         $this->id = $data["id"];
-        $this->ganztaegig = $data["ganztaegig"];
-        $this->date_from = $data["date_from"];
-        $this->date_to = $data["date_to"];
         $this->time_from = $data["time_from"];
         $this->time_to = $data["time_to"];
         $this->radius = $data["radius"];
@@ -18,7 +15,7 @@ class VolunteerProfile
         $this->medical_experience = $data["medical_experience"];
         $this->postal_code = $data["postal_code"];
         $this->user_id = $data["user_id"];
+        $this->bio = $data["bio"];
+        $this->phone = $data["phone"];
     }
 }
-
-?>

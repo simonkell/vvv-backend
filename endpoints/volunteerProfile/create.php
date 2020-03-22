@@ -8,7 +8,7 @@ use tools\HttpError;
 include(".." . DIRECTORY_SEPARATOR .".." . DIRECTORY_SEPARATOR . "config.php");
 include(".." . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "autoload.php");
 
-const REQUIRED_FIELDS = ['ganztaegig', 'date_from', 'date_to', 'time_from', 'time_to', 'radius', 'drivinglicense', 'medical_experience'];
+const REQUIRED_FIELDS = ['time_from', 'time_to', 'radius', 'drivinglicense', 'medical_experience', 'postal_code', 'bio', 'phone'];
 $master = new MasterController();
 /* SETUP */
 
@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $volunteerProfileId = $master->volunteerController->createVolunteerProfile($data->ganztaegig, $data->date_from, $data->date_to, $data->time_from, $data->time_to, $data->radius, $data->drivinglicense, $data->medical_experience);
+    $volunteerProfileId = $master->volunteerController->createVolunteerProfile($data->time_from, $data->time_to, $data->radius, $data->drivinglicense, $data->medical_experience, $data->postal_code, $master->user->id, $data->bio, $data->phone);
     if ($volunteerProfileId) {
         $volunteerProfile = $master->volunteerController->getVolunteerProfileById($volunteerProfileId);
         if($volunteerProfile) {
