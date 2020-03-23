@@ -225,7 +225,7 @@ Key will be used for activation and removed if correct. Correct or not, the user
 
 Type: GET\
 ```
-http://api.volunteersvsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=<CONFIRMATION_KEY>
+http://api.volunteervsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=<CONFIRMATION_KEY>
 ```
 
 ## How-Tos
