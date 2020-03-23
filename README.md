@@ -31,13 +31,13 @@ The backend is communicating using json requests and responses. Following functi
 - [ ] endpoints/volunteerProfile/
 - [ ] endpoints/confirmationKey/
 
-#### /endpoints/auth/
+### /endpoints/auth/
 Result headers:
 * HTTP 200: Everything worked fine!
 * HTTP 400: There went something wrong. Errors will be received as JSON array
 * HTTP 401: Unauthorized: Is the user logged in? Most probably not.
 
-##### register.php
+#### register.php
 Type: POST\
 Body: JSON
 ```json
@@ -47,7 +47,7 @@ Body: JSON
 }
 ```
 
-##### login.php
+#### login.php
 Type: POST\
 Body: JSON
 ```json
@@ -57,11 +57,11 @@ Body: JSON
 }
 ```
 
-##### logout.php
+#### logout.php
 Type: GET\
 Body: None
 
-##### change.php
+#### change.php
 Type: POST\
 Body: JSON
 ```json
@@ -73,7 +73,7 @@ Body: JSON
 }
 ```
 
-##### changePassword.php
+#### changePassword.php
 Type: POST\
 Body: JSON
 ```json
