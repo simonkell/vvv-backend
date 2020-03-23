@@ -25,6 +25,12 @@ Using SoapUi, we have created [THIS](VolunteersVsVirus-SOAPUI-REST_backend_calls
 ## Backend's functions and what they require
 The backend is communicating using json requests and responses. Following functions are implemented so far:
 
+**(this documentation will be extended in the next days *- last state: 23.03.2020*)**
+- [x] endpoints/auth/
+- [ ] endpoints/institutionProfile/
+- [ ] endpoints/volunteerProfile/
+- [ ] endpoints/confirmationKey/
+
 #### /endpoints/auth/
 Result headers:
 * HTTP 200: Everything worked fine!
@@ -32,7 +38,7 @@ Result headers:
 * HTTP 401: Unauthorized: Is the user logged in? Most probably not.
 
 ##### register.php
-Type: POST
+Type: POST\
 Body: JSON
 ```json
 {
@@ -42,7 +48,7 @@ Body: JSON
 ```
 
 ##### login.php
-Type: POST
+Type: POST\
 Body: JSON
 ```json
 {
@@ -52,11 +58,11 @@ Body: JSON
 ```
 
 ##### logout.php
-Type: GET
+Type: GET\
 Body: None
 
 ##### change.php
-Type: POST
+Type: POST\
 Body: JSON
 ```json
 {
@@ -68,7 +74,7 @@ Body: JSON
 ```
 
 ##### changePassword.php
-Type: POST
+Type: POST\
 Body: JSON
 ```json
 {
@@ -77,8 +83,6 @@ Body: JSON
     "passwordNew": ""
 }
 ```
-
-(this documentation will be extended in the next days *- written: 22.03.2020*)
 
 ## How-Tos
 
