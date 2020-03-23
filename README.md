@@ -217,6 +217,17 @@ Body: JSON
 }
 ```
 
+### endpoints/confirmationKey/
+
+#### endpoints/confirmationKey/```userConfirmation.php```
+This is a temporary solution for having a user confirmation without any frontend.
+Key will be used for activation and removed if correct. Correct or not, the user will be redirected immediately.
+
+Type: GET\
+```
+http://api.volunteersvsvirus.de/endpoints/confirmationKey/userConfirmation.php?key=<CONFIRMATION_KEY>
+```
+
 ## How-Tos
 
 These instructions will get you a copy of the backend up and running on your local machine or server for development and testing purposes.
