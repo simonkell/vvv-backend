@@ -25,19 +25,56 @@ Using SoapUi, we have created [THIS](VolunteersVsVirus-SOAPUI-REST_backend_calls
 ## Backend's functions and what they require
 The backend is communicating using json requests and responses. Following functions are implemented so far:
 
-####/endpoints/auth/
-#####register.php
+#### /endpoints/auth/
+Result headers:
+* HTTP 200: Everything worked fine!
+* HTTP 400: There went something wrong. Errors will be received as JSON array
+* HTTP 401: Unauthorized: Is the user logged in? Most probably not.
+
+##### register.php
+Type: POST
+Body: JSON
 ```json
 {
 	"email": "",
  	"pass": ""
 }
 ```
-#####login.php
+
+##### login.php
+Type: POST
+Body: JSON
 ```json
 {
 	"email": "",
  	"pass": ""
+}
+```
+
+##### logout.php
+Type: GET
+Body: None
+
+##### change.php
+Type: POST
+Body: JSON
+```json
+{
+    "id":  "",
+    "email": "",
+    "forename": "",
+    "surname": ""
+}
+```
+
+##### changePassword.php
+Type: POST
+Body: JSON
+```json
+{
+    "email": "",
+    "passwordOld": "",
+    "passwordNew": ""
 }
 ```
 
