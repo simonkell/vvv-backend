@@ -37,7 +37,7 @@ Result headers:
 * HTTP 400: There went something wrong. Errors will be received as JSON array
 * HTTP 401: Unauthorized: Is the user logged in? Most probably not.
 
-#### register.php
+#### /endpoints/auth/```register.php```
 Type: POST\
 Body: JSON
 ```json
@@ -47,7 +47,7 @@ Body: JSON
 }
 ```
 
-#### login.php
+#### /endpoints/auth/```login.php```
 Type: POST\
 Body: JSON
 ```json
@@ -57,11 +57,11 @@ Body: JSON
 }
 ```
 
-#### logout.php
+#### /endpoints/auth/```logout.php```
 Type: GET\
 Body: None
 
-#### change.php
+#### /endpoints/auth/```update.php```
 Type: POST\
 Body: JSON
 ```json
@@ -73,7 +73,7 @@ Body: JSON
 }
 ```
 
-#### changePassword.php
+#### /endpoints/auth/```updatePassword.php```
 Type: POST\
 Body: JSON
 ```json
@@ -81,6 +81,139 @@ Body: JSON
     "email": "",
     "passwordOld": "",
     "passwordNew": ""
+}
+```
+
+### endpoints/institutionProfile/
+
+#### endpoints/institutionProfile/```create.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "name": "",
+    "street": "",
+    "house_number": 0,
+    "postal_code": "",
+    "city": "",
+    "description": ""
+}
+```
+
+#### endpoints/institutionProfile/```change.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "institution_profile_id": 0,
+    "name": "",
+    "street": "",
+    "house_number": 0,
+    "postal_code": "",
+    "city": "",
+    "description": ""
+}
+```
+
+#### endpoints/institutionProfile/```all_by_user_id.php```
+This will be changed in further version. 
+There was a miscommunication while development so this returns an array of 1.
+
+Type: POST\
+Body: JSON
+```json
+{
+    "user_id": 0
+}
+```
+
+#### endpoints/institutionProfile/```by_id.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "id": 0
+}
+```
+
+#### endpoints/institutionProfile/```is.php```
+Returns a boolean as json telling if the specified user is an institution.
+
+Type: POST\
+Body: JSON
+```json
+{
+    "user_id": 0
+}
+```
+
+#### endpoints/institutionProfile/```list_nearby.php```
+Returns an array of institutions nearby for the user that is logged in. Obviously, the user has to have a volunteer profile created.
+
+Type: GET\
+Body: None
+
+### endpoints/volunteerProfile/
+
+#### endpoints/volunteerProfile/```create.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "time_from": "",
+    "time_to": "",
+    "radius": 5,
+    "drivinglicense": "",
+    "medical_experience": "",
+    "postal_code": "",
+    "bio": "",
+    "phone": ""
+}
+```
+
+#### endpoints/volunteerProfile/```change.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "volunteer_profile_id": 0,
+    "time_from": "",
+    "time_to": "",
+    "radius": 5,
+    "drivinglicense": "",
+    "medical_experience": "",
+    "postal_code": "",
+    "bio": "",
+    "phone": ""
+}
+```
+
+#### endpoints/volunteerProfile/```by_user_id.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "user_id": 0
+}
+```
+
+#### endpoints/volunteerProfile/```by_id.php```
+Type: POST\
+Body: JSON
+```json
+{
+    "id": 0
+}
+```
+
+#### endpoints/volunteerProfile/```is.php```
+Returns a boolean as json telling if the specified user is a volunteer.
+
+Type: POST\
+Body: JSON
+```json
+{
+    "user_id": 0
 }
 ```
 
